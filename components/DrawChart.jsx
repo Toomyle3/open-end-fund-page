@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as d3 from "d3";
 
 const DrawChart = ({
@@ -58,8 +58,6 @@ const DrawChart = ({
       w: width_legend,
       h: layout.h,
     };
-
-  draw_chart(chartData, "#chart_cr", "cr");
 
   function draw_chart(data, dom_id, chart_name) {
     // Dark/light mode color palette
@@ -1170,6 +1168,14 @@ const DrawChart = ({
       update_legends();
     }
   }
+
+  useEffect(() => {
+    const existingSvg = document.querySelector("#chart_cr svg");
+
+    if (!existingSvg) {
+      draw_chart(chartData, "#chart_cr", "cr");
+    }
+  }, [chartData]);
 
   return <div id="chart_cr"></div>;
 };
