@@ -80,7 +80,7 @@ const DrawChart = ({
     let data_orig = data;
     const time_format = d3.timeFormat("%Y-%m-%d");
     let y_format = d3.format("-");
-    let funds = data?.columns?.slice(1);
+    let funds = funds_info?.flatMap((fund) => fund.name);
 
     // let selected_funds = funds;
     let selected_funds = JSON.parse(localStorage.getItem("selected_funds"));
@@ -1172,12 +1172,16 @@ const DrawChart = ({
   useEffect(() => {
     const existingSvg = document.querySelector("#chart_cr svg");
 
-    if (!existingSvg) {
+    if (!existingSvg && chartData && chartData?.length > 0) {
       draw_chart(chartData, "#chart_cr", "cr");
     }
   }, [chartData]);
 
-  return <div id="chart_cr"></div>;
+  return (
+    <div className="flex w-full flex-col justify-center">
+      <div className="flex" id="chart_cr"></div>
+    </div>
+  );
 };
 
 export default DrawChart;
