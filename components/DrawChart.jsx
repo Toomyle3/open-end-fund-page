@@ -21,10 +21,10 @@ const DrawChart = ({
         top: 30,
         right: 30,
         bottom: 30,
-        left: 60,
+        left: 40,
       };
-      this.w = 1450;
-      this.h = 520;
+      this.w = window.innerWidth - 160;
+      this.h = window.innerHeight;
     })(),
     layout_top_line = new (function () {
       this.margin = {
@@ -33,8 +33,8 @@ const DrawChart = ({
       };
       this.x = 0;
       this.y = 6;
-      this.w = layout.w - this.margin.right - width_legend;
-      this.h = 10;
+      this.w = layout.w;
+      this.h = 20;
     })(),
     layout_main_chart = new (function () {
       this.margin = {
@@ -44,19 +44,19 @@ const DrawChart = ({
       this.x = 0;
       this.y = layout_top_line.h + layout_top_line.margin.bottom;
       this.w = layout_top_line.w;
-      this.h = layout.h - 95;
+      this.h = 550;
     })(),
     layout_minimap = new (function () {
       this.w = layout_main_chart.w;
-      this.h = 50;
+      this.h = 60;
       this.x = 0;
-      this.y = layout.h - this.h;
+      this.y = 600;
     })(),
     layout_legends = {
-      x: layout_main_chart.w + layout_main_chart.margin.right,
-      y: 5,
-      w: width_legend,
-      h: layout.h,
+      x: layout_main_chart.x,
+      y: 720,
+      w: window.outerWidth,
+      h: 400,
     };
 
   function draw_chart(data, dom_id, chart_name) {
@@ -766,7 +766,7 @@ const DrawChart = ({
           case "Active":
             return "Active funds";
           case "ETF":
-            return "Index funds";
+            return "ETF";
           case "Bond":
             return "Fixed income";
           case "Index":
