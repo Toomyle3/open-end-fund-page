@@ -8,16 +8,13 @@ import "./index.css";
 const ChartView = () => {
   const [data, setData] = useState(null);
   const y_columns = 4;
-  const width_legend_col = 110;
-  const width_legend = width_legend_col * y_columns;
-
-  // Number of ticks on axis
+  const width_legend_col = window.innerWidth / y_columns - 20;
+  const width_legend = window.innerWidth;
   const x_nticks = 6;
   const y_nticks = 4;
   const r_tooltips_item = 4;
 
   useEffect(() => {
-    // Read the data
     d3.csv("/data.csv")
       .then((rawData) => {
         const timeParse = d3.timeParse("%Y-%m-%d");
@@ -34,9 +31,7 @@ const ChartView = () => {
       });
   }, []);
 
-  const handleDownloadCsv = () => {
-    
-  };
+  const handleDownloadCsv = () => {};
 
   return (
     <section className="w-full justify-center flex flex-col p-[40px]">

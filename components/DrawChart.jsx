@@ -50,11 +50,11 @@ const DrawChart = ({
       this.w = layout_main_chart.w;
       this.h = 60;
       this.x = 0;
-      this.y = 600;
+      this.y = 620;
     })(),
     layout_legends = {
       x: layout_main_chart.x,
-      y: 720,
+      y: 740,
       w: window.outerWidth,
       h: 400,
     };
