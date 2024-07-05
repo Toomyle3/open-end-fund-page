@@ -29,7 +29,7 @@ const DrawChart = ({
         left: windowWidth > 450 ? 40 : 0,
       };
       this.w = windowWidth > 450 ? windowWidth - 160 : windowWidth - 10;
-      this.h = windowHeight + 400;
+      this.h = 1200;
     })(),
     layout_top_line = new (function () {
       this.margin = {
