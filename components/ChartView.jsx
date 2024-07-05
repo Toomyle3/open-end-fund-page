@@ -25,8 +25,8 @@ const ChartView = () => {
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const [dateRange, setDateRange] = useState({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(2021, 4, 20),
+    to: new Date(2024, 4, 20),
   });
 
   const selected_date = getDateRangeFromText(selectedPeriod);
@@ -36,7 +36,6 @@ const ChartView = () => {
       Date.parse(d.Date) <= selected_date[1]
   );
   const [selectedData, setSelectedData] = useState([]);
-  // console.log(selectedData, "selectedData");
   function getDateRangeFromText(rangeText) {
     const dateRegex = /\d{4}-\d{2}-\d{2}/g;
     const dates = rangeText.match(dateRegex);
@@ -162,7 +161,6 @@ const ChartView = () => {
             setSelectedData={setSelectedData}
             windowWidth={windowWidth}
             isNavSelected={isNavSelected}
-            dateRange={dateRange}
           />
         ) : (
           <div>loading...</div>

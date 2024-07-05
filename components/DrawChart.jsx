@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { defaultFunds } from "@/constants";
 
@@ -17,10 +17,7 @@ const DrawChart = ({
   setSelectedData,
   windowWidth,
   isNavSelected,
-  dateRange,
 }) => {
-  const rangeDate = [dateRange?.from, dateRange?.to];
-
   for (const t of fund_types) {
     funds_info[t] = funds_info.filter((f) => f.type === t).map((f) => f.name);
   }
@@ -93,7 +90,7 @@ const DrawChart = ({
 
     // let selected_funds = funds;
     let selected_funds = defaultFunds;
-    JSON.parse(localStorage.getItem("selected_funds"));
+    // JSON.parse(localStorage.getItem("selected_funds"));
     if (selected_funds === null)
       selected_funds = ["VNINDEX", "DCDS", "E1VFVN30", "TCEF", "VESAF"];
     let data_selected_funds_all;
@@ -751,7 +748,6 @@ const DrawChart = ({
           break;
       }
     }
-
     // Move brush to default selection
     const gb = minimap
       .append("g")
@@ -913,10 +909,6 @@ const DrawChart = ({
           } else {
             selected_funds = selected_funds.filter((fund) => fund !== d.name);
           }
-          // localStorage.setItem(
-          //   "selected_funds",
-          //   JSON.stringify(selected_funds)
-          // );
           data = data_orig.filter((d) => {
             for (const fund of selected_funds) {
               if (+d[fund] !== 0) {
@@ -937,10 +929,6 @@ const DrawChart = ({
           } else {
             selected_funds = selected_funds.filter((fund) => fund !== d.name);
           }
-          // localStorage.setItem(
-          //   "selected_funds",
-          //   JSON.stringify(selected_funds)
-          // );
           data = data_orig.filter((d) => {
             for (const fund of selected_funds) {
               if (+d[fund] === 0) {
@@ -1196,7 +1184,11 @@ const DrawChart = ({
       oppositeSvg.parentElement.removeChild(oppositeSvg);
     }
 
-    if (!existingSvg && chartData && chartData.length > 0) {
+    if (existingSvg) {
+      existingSvg.parentElement.removeChild(existingSvg);
+    }
+
+    if (chartData && chartData.length > 0) {
       draw_chart(chartData, chartContainerId, isNavSelected ? "navps" : "cr");
     }
   }, [chartData, isNavSelected]);
