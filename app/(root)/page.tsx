@@ -1,8 +1,8 @@
-import React from "react";
-import ChartView from "../../components/ChartView";
+"use client";
+import ChartView from "@/components/ChartView";
 
-const page = () => {
+const Page = () => {
   return <ChartView />;
 };
 
-export default page;
+export default Page;

@@ -5,30 +5,27 @@ import {
   funds_info,
   zoom_periods,
 } from "@/constants";
+import exportIcon from "@/public/icons/export-icon.svg";
+import { SignedIn, useClerk } from "@clerk/nextjs";
 import * as d3 from "d3";
 import { saveAs } from "file-saver";
-import { addDays } from "date-fns";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
 import "./index.css";
+import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
-import { Button } from "./ui/button";
-import Image from "next/image";
-import exportIcon from "@/public/icons/export-icon.svg";
-import { DatePickerWithRange } from "./ui/datepicker";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
+  const router = useRouter();
   const [windowWidth, setWindowWidth] = useState(null);
   const [isNavSelected, setIsNavSelected] = useState(false);
+  const { signOut } = useClerk();
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
-  const [dateRange, setDateRange] = useState({
-    from: new Date(2021, 4, 20),
-    to: new Date(2024, 4, 20),
-  });
-
   const selected_date = getDateRangeFromText(selectedPeriod);
   const filteredData = data?.filter(
     (d) =>
@@ -111,6 +108,18 @@ const ChartView = () => {
           : "pl-[5px] pr-[5px]"
       }`}
     >
+      <div>
+        <SignedIn>
+          <div className="flex-center w-full pb-14 max-lg:px-4 lg:pr-8">
+            <Button
+              className="text-16 w-[200px] bg-gray-700 text-white font-extrabold logout-btn"
+              onClick={() => signOut(() => router.push("/sign-in"))}
+            >
+              Log Out
+            </Button>
+          </div>
+        </SignedIn>
+      </div>
       <div className="flex justify-center pb-10">
         <h1 className="text-[40px] text-gray-600 font-[600] font-serif">
           Performance dashboard of open-ended funds in Vietnam
@@ -133,14 +142,6 @@ const ChartView = () => {
             <Label className="font-[500] text-[16px] font-serif">% value</Label>
           )}
         </div>
-        {/* <div>
-          <DatePickerWithRange
-            on
-            className="pr-[20px]"
-            setDate={setDateRange}
-            date={dateRange}
-          />
-        </div> */}
       </div>
       <div className="flex justify-center">
         {data && data?.length > 0 ? (
@@ -163,7 +164,9 @@ const ChartView = () => {
             isNavSelected={isNavSelected}
           />
         ) : (
-          <div>loading...</div>
+          <div className="h-[400px] flex justify-center w-full items-center">
+            loading...
+          </div>
         )}
       </div>
       <div className="flex justify-center pt-10">
