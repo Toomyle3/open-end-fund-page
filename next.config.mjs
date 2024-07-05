@@ -1,17 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: true,
   },
   images: {
-    domains: [
-      'clean-parrot-174.convex.cloud',
-      'img.clerk.com'
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "https://clean-parrot-174.convex.cloud",
+      },
     ],
-  },
-  env: {
-    NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
