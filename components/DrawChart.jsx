@@ -14,6 +14,8 @@ const DrawChart = ({
   setSelectedFunds,
   setSelectedPeriod,
   setSelectedData,
+  windowHeight,
+  windowWidth,
 }) => {
   for (const t of fund_types) {
     funds_info[t] = funds_info.filter((f) => f.type === t).map((f) => f.name);
@@ -22,26 +24,26 @@ const DrawChart = ({
   const layout = new (function () {
       this.margin = {
         top: 30,
-        right: 30,
+        right: windowWidth > 450 ? 30 : 0,
         bottom: 30,
-        left: 40,
+        left: windowWidth > 450 ? 40 : 0,
       };
-      this.w = window.innerWidth - 160;
-      this.h = window.innerHeight;
+      this.w = windowWidth > 450 ? windowWidth - 160 : windowWidth - 10;
+      this.h = windowHeight + 400;
     })(),
     layout_top_line = new (function () {
       this.margin = {
-        right: 50,
+        right: windowWidth > 450 ? 50 : 0,
         bottom: 10,
       };
       this.x = 0;
       this.y = 6;
       this.w = layout.w;
-      this.h = 20;
+      this.h =  windowWidth < 720 ? 45 : 20;
     })(),
     layout_main_chart = new (function () {
       this.margin = {
-        right: 40,
+        right: windowWidth > 450 ? 40 : 0,
         bottom: 30,
       };
       this.x = 0;
@@ -56,9 +58,9 @@ const DrawChart = ({
       this.y = 620;
     })(),
     layout_legends = {
-      x: layout_main_chart.x,
+      x: 10,
       y: 740,
-      w: window.outerWidth,
+      w: windowWidth,
       h: 400,
     };
 
@@ -252,18 +254,28 @@ const DrawChart = ({
     }
 
     // Selected time range info
-    let selected_range_text = top_line
-      .append("text")
-      .classed("selected-range", true)
-      .attr("font-family", "monospace")
-      // .attr("font-family", "sans-serif")
-      .attr("font-size", 14)
-      .attr("text-anchor", "end")
-      // .attr("fill", "#0069c2")
-      .attr("fill", colors.selected_range_text[light_mode])
-      .style("user-select", "none")
-      .attr("x", layout_top_line.w)
-      .attr("y", 0);
+    let selected_range_text =
+      windowWidth < 720
+        ? top_line
+            .append("text")
+            .classed("selected-range", true)
+            .attr("font-family", "monospace")
+            .attr("font-size", 14)
+            .attr("text-anchor", "start")
+            .attr("fill", colors.selected_range_text[light_mode])
+            .style("user-select", "none")
+            .attr("x", 18)
+            .attr("y", 30)
+        : top_line
+            .append("text")
+            .classed("selected-range", true)
+            .attr("font-family", "monospace")
+            .attr("font-size", 14)
+            .attr("text-anchor", "end")
+            .attr("fill", colors.selected_range_text[light_mode])
+            .style("user-select", "none")
+            .attr("x", layout_top_line.w)
+            .attr("y", 0);
 
     // MAIN CHART
     let main_chart = svg_g
@@ -1159,11 +1171,7 @@ const DrawChart = ({
       // Current selection needs to be updated too
       selected_date = [
         // TODO: this needs to be improved
-        d3.max([
-          // d3.utcYear.offset(x_all.domain()[1], -3),
-          x_all.domain()[0],
-          selected_date[0],
-        ]),
+        d3.max([x_all.domain()[0], selected_date[0]]),
         x_all.domain()[1],
       ];
       let updated_selection = [

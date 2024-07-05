@@ -12,6 +12,9 @@ import "./index.css";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(null);
+  const [windowHeight, setWindowHeight] = useState(null);
+
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const selected_date = getDateRangeFromText(selectedPeriod);
@@ -28,10 +31,13 @@ const ChartView = () => {
   }
 
   const y_columns = 4;
-  const width_legend_col = window.innerWidth / y_columns - 20;
+  const width_legend_col =
+    windowWidth > 450 ? windowWidth / y_columns - 20 : windowWidth / y_columns - 5;
   const x_nticks = 6;
   const y_nticks = 4;
   const r_tooltips_item = 4;
+
+  const handleDownloadCsv = () => {};
 
   useEffect(() => {
     d3.csv("/data.csv").then((rawData) => {
@@ -55,10 +61,22 @@ const ChartView = () => {
     }
   }, [data]);
 
-  const handleDownloadCsv = () => {};
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      setWindowHeight(window.innerHeight);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <section className="w-full justify-center flex flex-col p-[40px]">
+    <section
+      className={`w-full justify-center text-center flex flex-col ${
+        windowWidth > 450 ? "p-[40px]" : "pl-[5px] pr-[5px]"
+      }`}
+    >
       <div className="flex justify-center pb-10">
         <h1 className="text-[40px] text-gray-600 font-[600] font-serif">
           Performance dashboard of open-ended funds in Vietnam
@@ -81,6 +99,8 @@ const ChartView = () => {
             setSelectedFunds={setSelectedFunds}
             setSelectedPeriod={setSelectedPeriod}
             setSelectedData={setSelectedData}
+            windowWidth={windowWidth}
+            windowHeight={windowHeight}
           />
         )}
       </div>

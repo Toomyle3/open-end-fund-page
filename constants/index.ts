@@ -44,7 +44,7 @@ export const funds_info = [
   { name: "FUEKIVFS", type: "ETF", company: "KIM" },
 ];
 
-export const zoom_periods = ["1M", "3M", "6M", "YTD", "1Y", "3Y", "5Y", "All"];
+export const zoom_periods = ["1M", "3M", "6M", "YTD", "1Y", "3Y", "All"];
 
 export const fund_types = ["Index", "ETF", "Active", "Bond"];
 
