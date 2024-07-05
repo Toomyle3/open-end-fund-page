@@ -1,8 +1,8 @@
 "use client";
 import ChartView from "@/components/ChartView";
 
-const Page = () => {
+const Home = () => {
   return <ChartView />;
 };
 
-export default Page;
+export default Home;
