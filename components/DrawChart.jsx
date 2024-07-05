@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import * as d3 from "d3";
+import { defaultFunds } from "@/constants";
 
 const DrawChart = ({
   fund_types,
@@ -14,8 +15,8 @@ const DrawChart = ({
   setSelectedFunds,
   setSelectedPeriod,
   setSelectedData,
-  windowHeight,
   windowWidth,
+  isNavSelected,
 }) => {
   for (const t of fund_types) {
     funds_info[t] = funds_info.filter((f) => f.type === t).map((f) => f.name);
@@ -39,7 +40,7 @@ const DrawChart = ({
       this.x = 0;
       this.y = 6;
       this.w = layout.w;
-      this.h =  windowWidth < 720 ? 45 : 20;
+      this.h = windowWidth < 720 ? 45 : 20;
     })(),
     layout_main_chart = new (function () {
       this.margin = {
@@ -88,12 +89,12 @@ const DrawChart = ({
     let funds = funds_info?.flatMap((fund) => fund.name);
 
     // let selected_funds = funds;
-    let selected_funds = JSON.parse(localStorage.getItem("selected_funds"));
+    let selected_funds = defaultFunds;
+    JSON.parse(localStorage.getItem("selected_funds"));
     if (selected_funds === null)
       selected_funds = ["VNINDEX", "DCDS", "E1VFVN30", "TCEF", "VESAF"];
     let data_selected_funds_all;
     let highlighted_fund = null;
-    setSelectedFunds(selected_funds);
 
     // append the svg object to the body of the page
     const svg = d3
@@ -813,7 +814,7 @@ const DrawChart = ({
         if (selected_funds.includes(d.name)) this.enabled = true;
       });
 
-    // Legend inllustration with color
+    // Legend illustration with color
     let r = 6;
     g_legend_items
       .append("circle")
@@ -912,10 +913,10 @@ const DrawChart = ({
           } else {
             selected_funds = selected_funds.filter((fund) => fund !== d.name);
           }
-          localStorage.setItem(
-            "selected_funds",
-            JSON.stringify(selected_funds)
-          );
+          // localStorage.setItem(
+          //   "selected_funds",
+          //   JSON.stringify(selected_funds)
+          // );
           data = data_orig.filter((d) => {
             for (const fund of selected_funds) {
               if (+d[fund] !== 0) {
@@ -936,10 +937,10 @@ const DrawChart = ({
           } else {
             selected_funds = selected_funds.filter((fund) => fund !== d.name);
           }
-          localStorage.setItem(
-            "selected_funds",
-            JSON.stringify(selected_funds)
-          );
+          // localStorage.setItem(
+          //   "selected_funds",
+          //   JSON.stringify(selected_funds)
+          // );
           data = data_orig.filter((d) => {
             for (const fund of selected_funds) {
               if (+d[fund] === 0) {
@@ -1148,6 +1149,7 @@ const DrawChart = ({
     // Completely update whole chart with new data
     function update(data, selected_funds) {
       setSelectedData(data);
+      setSelectedFunds(selected_funds);
       data_g = get_data_g();
 
       // Update colors for selected funds
@@ -1185,15 +1187,23 @@ const DrawChart = ({
   }
 
   useEffect(() => {
-    const existingSvg = document.querySelector("#chart_cr svg");
+    const chartContainerId = isNavSelected ? "#chart_nav" : "#chart_cr";
+    const oppositeContainerId = isNavSelected ? "#chart_cr" : "#chart_nav";
+    const existingSvg = document.querySelector(`${chartContainerId} svg`);
+    const oppositeSvg = document.querySelector(`${oppositeContainerId} svg`);
 
-    if (!existingSvg && chartData && chartData?.length > 0) {
-      draw_chart(chartData, "#chart_cr", "cr");
+    if (oppositeSvg) {
+      oppositeSvg.parentElement.removeChild(oppositeSvg);
     }
-  }, [chartData]);
+
+    if (!existingSvg && chartData && chartData.length > 0) {
+      draw_chart(chartData, chartContainerId, isNavSelected ? "navps" : "cr");
+    }
+  }, [chartData, isNavSelected]);
 
   return (
     <div className="flex w-full flex-col justify-center">
+      <div className="flex" id="chart_nav"></div>
       <div className="flex" id="chart_cr"></div>
     </div>
   );

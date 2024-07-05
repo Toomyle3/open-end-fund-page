@@ -9,12 +9,14 @@ import * as d3 from "d3";
 import DrawChart from "./DrawChart";
 import { useEffect, useState } from "react";
 import "./index.css";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
+import { saveAs } from "file-saver";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
-  const [windowHeight, setWindowHeight] = useState(null);
-
+  const [isNavSelected, setIsNavSelected] = useState(false);
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const selected_date = getDateRangeFromText(selectedPeriod);
@@ -24,6 +26,7 @@ const ChartView = () => {
       Date.parse(d.Date) <= selected_date[1]
   );
   const [selectedData, setSelectedData] = useState([]);
+  console.log(selectedData, "selectedData");
   function getDateRangeFromText(rangeText) {
     const dateRegex = /\d{4}-\d{2}-\d{2}/g;
     const dates = rangeText.match(dateRegex);
@@ -32,12 +35,31 @@ const ChartView = () => {
 
   const y_columns = 4;
   const width_legend_col =
-    windowWidth > 450 ? windowWidth / y_columns - 20 : windowWidth / y_columns - 5;
+    windowWidth > 450
+      ? windowWidth / y_columns - 20
+      : windowWidth / y_columns - 5;
   const x_nticks = 6;
   const y_nticks = 4;
   const r_tooltips_item = 4;
 
-  const handleDownloadCsv = () => {};
+  const handleDownloadCsv = () => {
+    if (
+      !selectedFunds ||
+      selectedFunds.length === 0 ||
+      !selectedData ||
+      selectedData.length === 0
+    ) {
+      console.warn("No data available to download.");
+      return;
+    }
+    const headers = ["Date", selectedFunds].join(",");
+    const rows = selectedData.map((row) => {
+      return selectedFunds.map((fund) => row[fund]).join(",");
+    });
+    const csvContent = [headers, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "export.csv");
+  };
 
   useEffect(() => {
     d3.csv("/data.csv").then((rawData) => {
@@ -64,7 +86,6 @@ const ChartView = () => {
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setWindowHeight(window.innerHeight);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -74,7 +95,9 @@ const ChartView = () => {
   return (
     <section
       className={`w-full justify-center text-center flex flex-col ${
-        windowWidth > 450 ? "p-[40px]" : "pl-[5px] pr-[5px]"
+        windowWidth > 450
+          ? "pl-[40px] pr-[20px] pb-[60px] pt-[60px]"
+          : "pl-[5px] pr-[5px]"
       }`}
     >
       <div className="flex justify-center pb-10">
@@ -82,10 +105,26 @@ const ChartView = () => {
           Performance dashboard of open-ended funds in Vietnam
         </h1>
       </div>
+      <div className="flex items-center gap-5 pl-[55px]">
+        <h4 className="font-[600] text-[16px] font-serif">Chart Type</h4>
+        <Switch
+          id="chart-type"
+          onCheckedChange={(value) => {
+            setIsNavSelected(value);
+          }}
+        />
+        {isNavSelected ? (
+          <Label className="font-[500] text-[16px] font-serif">
+            Net asset value
+          </Label>
+        ) : (
+          <Label className="font-[500] text-[16px] font-serif">% value</Label>
+        )}
+      </div>
       <div className="flex justify-center">
         {data && (
           <DrawChart
-            // chart ratio
+            // Chart ratio
             fund_types={fund_types}
             funds_info={funds_info}
             zoom_periods={zoom_periods}
@@ -93,14 +132,14 @@ const ChartView = () => {
             x_nticks={x_nticks}
             y_nticks={y_nticks}
             r_tooltips_item={r_tooltips_item}
-            // csv data
+            // Csv data
             chartData={data}
-            // colect data for export csv
+            // CSV export data collection
             setSelectedFunds={setSelectedFunds}
             setSelectedPeriod={setSelectedPeriod}
             setSelectedData={setSelectedData}
             windowWidth={windowWidth}
-            windowHeight={windowHeight}
+            isNavSelected={isNavSelected}
           />
         )}
       </div>

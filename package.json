@@ -9,17 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-switch": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "csv-parser": "^3.0.0",
     "d3": "^7.9.0",
     "d3.js": "^0.0.2-security",
+    "file-saver": "^2.0.5",
     "fs": "^0.0.1-security",
+    "lucide-react": "^0.400.0",
     "next": "14.2.4",
     "path": "^0.12.7",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
