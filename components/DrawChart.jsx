@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect } from "react";
-import * as d3 from "d3";
 import { defaultFunds } from "@/constants";
+import * as d3 from "d3";
+import { useEffect } from "react";
 
 const DrawChart = ({
   fund_types,
@@ -1148,9 +1148,9 @@ const DrawChart = ({
 
     // Completely update whole chart with new data
     function update(data, selected_funds) {
+      data_g = get_data_g();
       setSelectedData(data);
       setSelectedFunds(selected_funds);
-      data_g = get_data_g();
 
       // Update colors for selected funds
       colorScales.domain([0, selected_funds.length]);

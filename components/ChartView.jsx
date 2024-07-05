@@ -6,12 +6,12 @@ import {
   zoom_periods,
 } from "@/constants";
 import * as d3 from "d3";
-import DrawChart from "./DrawChart";
-import { useEffect, useState } from "react";
-import "./index.css";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
 import { saveAs } from "file-saver";
+import { useEffect, useState } from "react";
+import DrawChart from "./DrawChart";
+import "./index.css";
+import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
@@ -19,6 +19,7 @@ const ChartView = () => {
   const [isNavSelected, setIsNavSelected] = useState(false);
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
+
   const selected_date = getDateRangeFromText(selectedPeriod);
   const filteredData = data?.filter(
     (d) =>
@@ -26,7 +27,7 @@ const ChartView = () => {
       Date.parse(d.Date) <= selected_date[1]
   );
   const [selectedData, setSelectedData] = useState([]);
-  console.log(selectedData, "selectedData");
+  // console.log(selectedData, "selectedData");
   function getDateRangeFromText(rangeText) {
     const dateRegex = /\d{4}-\d{2}-\d{2}/g;
     const dates = rangeText.match(dateRegex);
@@ -44,17 +45,24 @@ const ChartView = () => {
 
   const handleDownloadCsv = () => {
     if (
+      !selected_date ||
+      selected_date?.length === 0 ||
       !selectedFunds ||
       selectedFunds.length === 0 ||
       !selectedData ||
       selectedData.length === 0
     ) {
-      console.warn("No data available to download.");
       return;
     }
-    const headers = ["Date", selectedFunds].join(",");
-    const rows = selectedData.map((row) => {
-      return selectedFunds.map((fund) => row[fund]).join(",");
+    const headerWithDate = ["Date", ...selectedFunds];
+    const filteredData = selectedData?.filter(
+      (fund) =>
+        Date.parse(fund?.Date) <= selected_date[1] &&
+        Date.parse(fund?.Date) >= selected_date[0]
+    );
+    const headers = headerWithDate.join(",");
+    const rows = filteredData.map((row) => {
+      return headerWithDate.map((fund) => row[fund]).join(",");
     });
     const csvContent = [headers, ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -75,12 +83,7 @@ const ChartView = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      selectedFunds.length === defaultFunds.length &&
-      selectedFunds.every((fund, index) => fund === defaultFunds[index])
-    ) {
-      setSelectedData(filteredData);
-    }
+    setSelectedData(filteredData);
   }, [data]);
 
   useEffect(() => {
@@ -122,7 +125,7 @@ const ChartView = () => {
         )}
       </div>
       <div className="flex justify-center">
-        {data && (
+        {data && data?.length > 0 ? (
           <DrawChart
             // Chart ratio
             fund_types={fund_types}
@@ -141,6 +144,8 @@ const ChartView = () => {
             windowWidth={windowWidth}
             isNavSelected={isNavSelected}
           />
+        ) : (
+          <div>loading...</div>
         )}
       </div>
       <div className="flex justify-center pt-10">
