@@ -1,7 +1,7 @@
 "use client";
-import { defaultFunds } from "@/constants";
+import React, { useEffect } from "react";
 import * as d3 from "d3";
-import { useEffect } from "react";
+import { defaultFunds } from "@/constants";
 
 const DrawChart = ({
   fund_types,

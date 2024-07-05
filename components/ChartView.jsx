@@ -12,6 +12,9 @@ import DrawChart from "./DrawChart";
 import "./index.css";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
+import { Button } from "./ui/button";
+import Image from "next/image";
+import exportIcon from "@/public/icons/export-icon.svg";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
@@ -149,12 +152,10 @@ const ChartView = () => {
         )}
       </div>
       <div className="flex justify-center pt-10">
-        <button
-          className="button-style border border-l-2 w-[200px] h-[40px] rounded bg-green-500 text-white"
-          onClick={handleDownloadCsv}
-        >
+        <Button className="w-[180px] h-[40px] flex gap-2" onClick={handleDownloadCsv}>
+          <Image src={exportIcon} width={20} height={20} alt="export" />
           Export CSV
-        </button>
+        </Button>
       </div>
     </section>
   );
