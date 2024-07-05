@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import * as d3 from "d3";
 
@@ -6,11 +7,13 @@ const DrawChart = ({
   funds_info,
   zoom_periods,
   width_legend_col,
-  width_legend,
   x_nticks,
   y_nticks,
   chartData,
   r_tooltips_item,
+  setSelectedFunds,
+  setSelectedPeriod,
+  setSelectedData,
 }) => {
   for (const t of fund_types) {
     funds_info[t] = funds_info.filter((f) => f.type === t).map((f) => f.name);
@@ -88,6 +91,7 @@ const DrawChart = ({
       selected_funds = ["VNINDEX", "DCDS", "E1VFVN30", "TCEF", "VESAF"];
     let data_selected_funds_all;
     let highlighted_fund = null;
+    setSelectedFunds(selected_funds);
 
     // append the svg object to the body of the page
     const svg = d3
@@ -690,6 +694,7 @@ const DrawChart = ({
         selection = selection_default;
         gb.transition().call(brush.move, selection_default);
       }
+
       // selection = selection || x.range();
       selected_date[0] = x_all.invert(selection[0]);
       selected_date[1] = x_all.invert(selection[1]);
@@ -707,6 +712,8 @@ const DrawChart = ({
             selected_date[1]
           )}`
       );
+
+      setSelectedPeriod(selected_range_text?._groups[0][0].innerHTML);
 
       switch (chart_name) {
         case "navps":
@@ -1128,6 +1135,7 @@ const DrawChart = ({
 
     // Completely update whole chart with new data
     function update(data, selected_funds) {
+      setSelectedData(data);
       data_g = get_data_g();
 
       // Update colors for selected funds
@@ -1163,7 +1171,6 @@ const DrawChart = ({
         x_all(selected_date[1]),
       ];
       gb.call(brush.move, updated_selection);
-
       update_tooltips();
       update_legends();
     }
