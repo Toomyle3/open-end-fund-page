@@ -7,6 +7,7 @@ import {
 } from "@/constants";
 import * as d3 from "d3";
 import { saveAs } from "file-saver";
+import { addDays } from "date-fns";
 import { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
 import "./index.css";
@@ -15,6 +16,7 @@ import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import exportIcon from "@/public/icons/export-icon.svg";
+import { DatePickerWithRange } from "./ui/datepicker";
 
 const ChartView = () => {
   const [data, setData] = useState(null);
@@ -22,6 +24,10 @@ const ChartView = () => {
   const [isNavSelected, setIsNavSelected] = useState(false);
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const [selectedPeriod, setSelectedPeriod] = useState("");
+  const [dateRange, setDateRange] = useState({
+    from: new Date(2022, 0, 20),
+    to: addDays(new Date(2022, 0, 20), 20),
+  });
 
   const selected_date = getDateRangeFromText(selectedPeriod);
   const filteredData = data?.filter(
@@ -111,21 +117,31 @@ const ChartView = () => {
           Performance dashboard of open-ended funds in Vietnam
         </h1>
       </div>
-      <div className="flex items-center gap-5 pl-[55px]">
-        <h4 className="font-[600] text-[16px] font-serif">Chart Type</h4>
-        <Switch
-          id="chart-type"
-          onCheckedChange={(value) => {
-            setIsNavSelected(value);
-          }}
-        />
-        {isNavSelected ? (
-          <Label className="font-[500] text-[16px] font-serif">
-            Net asset value
-          </Label>
-        ) : (
-          <Label className="font-[500] text-[16px] font-serif">% value</Label>
-        )}
+      <div className="flex flex-col justify-center sm:flex-row gap-5 sm:justify-between items-center pl-[55px] pr-[20px]">
+        <div className="flex gap-5">
+          <h4 className="font-[600] text-[16px] font-serif">Chart Type</h4>
+          <Switch
+            id="chart-type"
+            onCheckedChange={(value) => {
+              setIsNavSelected(value);
+            }}
+          />
+          {isNavSelected ? (
+            <Label className="font-[500] text-[16px] font-serif">
+              Net asset value
+            </Label>
+          ) : (
+            <Label className="font-[500] text-[16px] font-serif">% value</Label>
+          )}
+        </div>
+        {/* <div>
+          <DatePickerWithRange
+            on
+            className="pr-[20px]"
+            setDate={setDateRange}
+            date={dateRange}
+          />
+        </div> */}
       </div>
       <div className="flex justify-center">
         {data && data?.length > 0 ? (
@@ -146,13 +162,17 @@ const ChartView = () => {
             setSelectedData={setSelectedData}
             windowWidth={windowWidth}
             isNavSelected={isNavSelected}
+            dateRange={dateRange}
           />
         ) : (
           <div>loading...</div>
         )}
       </div>
       <div className="flex justify-center pt-10">
-        <Button className="w-[180px] h-[40px] flex gap-2" onClick={handleDownloadCsv}>
+        <Button
+          className="w-[180px] h-[40px] flex gap-2"
+          onClick={handleDownloadCsv}
+        >
           <Image src={exportIcon} width={20} height={20} alt="export" />
           Export CSV
         </Button>

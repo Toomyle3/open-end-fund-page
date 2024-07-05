@@ -17,7 +17,10 @@ const DrawChart = ({
   setSelectedData,
   windowWidth,
   isNavSelected,
+  dateRange,
 }) => {
+  const rangeDate = [dateRange?.from, dateRange?.to];
+
   for (const t of fund_types) {
     funds_info[t] = funds_info.filter((f) => f.type === t).map((f) => f.name);
   }
@@ -586,7 +589,6 @@ const DrawChart = ({
           highlighted_fund = null;
         }
       });
-
       tooltips_text_date.text(
         `${time_format(selected_date[0])} → ${time_format(selected_data.date)}`
       );
@@ -673,7 +675,6 @@ const DrawChart = ({
     // Minimap X axis
     minimap
       .append("g")
-      // .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
       .classed("minimap-axis-x", true)
       .call(d3.axisBottom(x).ticks(d3.utcYear))
       .attr("transform", `translate(${layout_minimap.x}, ${layout_minimap.h})`);
@@ -708,7 +709,6 @@ const DrawChart = ({
         gb.transition().call(brush.move, selection_default);
       }
 
-      // selection = selection || x.range();
       selected_date[0] = x_all.invert(selection[0]);
       selected_date[1] = x_all.invert(selection[1]);
       x.domain([selected_date[0], selected_date[1]]);
