@@ -1,5 +1,4 @@
 import { ConvexError, v } from "convex/values";
-
 import { mutation, query } from "./_generated/server";
 
 export const createFunds = mutation({
@@ -59,14 +58,14 @@ export const createFunds = mutation({
     const user = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("email"), identity.email))
-      .collect();
+      .first();
 
-    if (user.length === 0) {
+    if (!user) {
       throw new ConvexError("User not found");
     }
 
-    return await ctx.db.insert("funds", {
-      user: user[0]._id,
+    const fundData = {
+      user: user._id,
       Date: args.Date,
       DCDS: args.DCDS,
       DCDE: args.DCDE,
@@ -111,7 +110,9 @@ export const createFunds = mutation({
       FUEKIVFS: args.FUEKIVFS,
       VNINDEX: args.VNINDEX,
       VN30: args.VN30,
-    });
+    };
+
+    return await ctx.db.insert("funds", fundData);
   },
 });
 
