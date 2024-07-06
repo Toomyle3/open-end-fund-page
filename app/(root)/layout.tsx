@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <div className="relative flex flex-col">
       <main className="relative flex pb-20">
-        <section className="flex min-h-screen flex-1 flex-col pl-[20px] overflow-auto">
+        <section className="flex min-h-screen flex-1 flex-col p-[10px] px-[20px] py-[20px] overflow-auto">
           <div className="flex w-full flex-col">
             <div
               className="gap-2 flex h-16 

@@ -7,12 +7,10 @@ import {
 } from "@/constants";
 import { api } from "@/convex/_generated/api";
 import exportIcon from "@/public/icons/export-icon.svg";
-import { SignedIn, useClerk } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import * as d3 from "d3";
 import { saveAs } from "file-saver";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Button } from "./ui/button";
@@ -29,8 +27,6 @@ const ChartView = () => {
       date: timeParse(Date),
     })
   );
-  const router = useRouter();
-  const { signOut } = useClerk();
 
   // States
   const [data, setData] = useState(null);
