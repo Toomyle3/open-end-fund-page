@@ -122,20 +122,8 @@ const ChartView = () => {
           : "pl-[5px] pr-[5px]"
       }`}
     >
-      <div>
-        <SignedIn>
-          <div className="flex-center w-full pb-14 max-lg:px-4 lg:pr-8">
-            <Button
-              className="text-16 w-[200px] bg-gray-700 text-white font-extrabold logout-btn"
-              onClick={() => signOut(() => router.push("/sign-in"))}
-            >
-              Log Out
-            </Button>
-          </div>
-        </SignedIn>
-      </div>
       <div className="flex justify-center pb-10">
-        <h1 className="text-[40px] text-gray-600 font-[600] font-serif">
+        <h1 className="text-[30px] text-gray-600 font-[600] font-serif">
           Performance dashboard of open-ended funds in Vietnam
         </h1>
       </div>

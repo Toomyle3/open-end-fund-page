@@ -49,3 +49,16 @@ export const zoom_periods = ["1M", "3M", "6M", "YTD", "1Y", "3Y", "All"];
 export const fund_types = ["Index", "ETF", "Active", "Bond"];
 
 export const defaultFunds = ["VNINDEX", "DCDS", "E1VFVN30", "TCEF", "VESAF"];
+
+export const sidebarLinks = [
+  {
+    imgURL: "/icons/home.svg",
+    route: "/",
+    label: "Home",
+  },
+  {
+    imgURL: "/icons/data_view.svg",
+    route: "/data-view",
+    label: "Date View",
+  },
+];
