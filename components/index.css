@@ -1,7 +1,0 @@
-.button-style {
-  &:hover {
-    background-color: azure;
-    color: black;
-    border: 1px solid greenyellow;
-  }
-}

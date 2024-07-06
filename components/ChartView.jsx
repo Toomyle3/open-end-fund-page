@@ -15,10 +15,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
-import "./index.css";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
+import { Skeleton } from "./ui/skeleton";
 
 const ChartView = () => {
   // Hooks
@@ -57,6 +57,7 @@ const ChartView = () => {
       Date.parse(d.Date) >= selected_date[0] &&
       Date.parse(d.Date) <= selected_date[1]
   );
+
   function getDateRangeFromText(rangeText) {
     const dateRegex = /\d{4}-\d{2}-\d{2}/g;
     const dates = rangeText.match(dateRegex);
@@ -178,14 +179,26 @@ const ChartView = () => {
           />
         ) : (
           <div
-            className="h-[400px] 
+            className="
+            pt-10
+            h-[600px] 
           flex 
           justify-center w-full 
           items-center
            text-black 
-          font-[30px]"
+          text-[30px]
+          font-[25px]
+          font-serif"
           >
-            Loading...
+            <Skeleton
+              className="h-[600px] 
+            w-screen 
+            rounded-xl 
+            flex justify-center 
+            items-center"
+            >
+              Loading...
+            </Skeleton>
           </div>
         )}
       </div>
