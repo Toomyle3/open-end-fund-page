@@ -113,7 +113,7 @@ const ChartView = () => {
   return (
     <section
       className={`w-full justify-center text-center flex flex-col ${
-        windowWidth > 450
+        windowWidth > 550
           ? "pl-[40px] pr-[20px] pb-[60px] pt-[60px]"
           : "pl-[5px] pr-[5px]"
       }`}

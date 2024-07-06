@@ -1,7 +1,7 @@
 "use client";
 import { defaultFunds } from "@/constants";
 import * as d3 from "d3";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 const DrawChart = ({
   fund_types,
@@ -25,16 +25,16 @@ const DrawChart = ({
   const layout = new (function () {
       this.margin = {
         top: 30,
-        right: windowWidth > 450 ? 30 : 0,
+        right: windowWidth > 550 ? 30 : 0,
         bottom: 30,
-        left: windowWidth > 450 ? 40 : 0,
+        left: windowWidth > 550 ? 40 : 0,
       };
-      this.w = windowWidth > 450 ? windowWidth - 160 : windowWidth - 10;
+      this.w = windowWidth > 550 ? windowWidth - 160 : windowWidth - 10;
       this.h = 1200;
     })(),
     layout_top_line = new (function () {
       this.margin = {
-        right: windowWidth > 450 ? 50 : 0,
+        right: windowWidth > 550 ? 50 : 0,
         bottom: 10,
       };
       this.x = 0;
@@ -44,7 +44,7 @@ const DrawChart = ({
     })(),
     layout_main_chart = new (function () {
       this.margin = {
-        right: windowWidth > 450 ? 40 : 0,
+        right: windowWidth > 550 ? 40 : 0,
         bottom: 30,
       };
       this.x = 0;
@@ -1174,24 +1174,41 @@ const DrawChart = ({
     }
   }
 
-  useEffect(() => {
+  const draw_svg = useCallback(() => {
     const chartContainerId = isNavSelected ? "#chart_nav" : "#chart_cr";
     const oppositeContainerId = isNavSelected ? "#chart_cr" : "#chart_nav";
-    const existingSvg = document.querySelector(`${chartContainerId} svg`);
-    const oppositeSvg = document.querySelector(`${oppositeContainerId} svg`);
 
-    if (oppositeSvg) {
-      oppositeSvg.parentElement.removeChild(oppositeSvg);
-    }
+    [chartContainerId, oppositeContainerId].forEach((id) => {
+      const svg = document.querySelector(`${id} svg`);
+      if (svg) svg.remove();
+    });
 
-    if (existingSvg) {
-      existingSvg.parentElement.removeChild(existingSvg);
-    }
-
-    if (chartData && chartData.length > 0) {
+    if (chartData?.length > 0) {
       draw_chart(chartData, chartContainerId, isNavSelected ? "navps" : "cr");
     }
-  }, [chartData, isNavSelected]);
+  }, [chartData, isNavSelected, draw_chart]);
+
+  function debounce(func, delay) {
+    let timerId;
+    return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        func.apply(context, args);
+      }, delay);
+    };
+  }
+
+  useEffect(() => {
+    draw_svg();
+  }, [draw_svg]);
+
+  useEffect(() => {
+    const handleResize = debounce(() => draw_svg(), 250);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [draw_svg]);
 
   return (
     <div className="flex w-full flex-col justify-center">
