@@ -124,7 +124,7 @@ export function FundDetail() {
   const csvData = React.useMemo(() => {
     if (!data) return [];
     return [
-      ["Date", "NAV"],
+      ["Date", currentFund?.short_name],
       ...data.map((item: any) => [item.date, item.value]),
     ];
   }, [data]);
