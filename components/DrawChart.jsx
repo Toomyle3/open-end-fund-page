@@ -1,7 +1,7 @@
 "use client";
 import { defaultFunds } from "@/constants";
 import * as d3 from "d3";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 const DrawChart = ({
   fund_types,
@@ -1174,41 +1174,24 @@ const DrawChart = ({
     }
   }
 
-  const draw_svg = useCallback(() => {
+  useEffect(() => {
     const chartContainerId = isNavSelected ? "#chart_nav" : "#chart_cr";
     const oppositeContainerId = isNavSelected ? "#chart_cr" : "#chart_nav";
+    const existingSvg = document.querySelector(`${chartContainerId} svg`);
+    const oppositeSvg = document.querySelector(`${oppositeContainerId} svg`);
 
-    [chartContainerId, oppositeContainerId].forEach((id) => {
-      const svg = document.querySelector(`${id} svg`);
-      if (svg) svg.remove();
-    });
+    if (oppositeSvg) {
+      oppositeSvg.parentElement.removeChild(oppositeSvg);
+    }
 
-    if (chartData?.length > 0) {
+    if (existingSvg) {
+      existingSvg.parentElement.removeChild(existingSvg);
+    }
+
+    if (chartData && chartData.length > 0) {
       draw_chart(chartData, chartContainerId, isNavSelected ? "navps" : "cr");
     }
   }, [chartData, isNavSelected]);
-
-  function debounce(func, delay) {
-    let timerId;
-    return function() {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timerId);
-      timerId = setTimeout(() => {
-        func.apply(context, args);
-      }, delay);
-    };
-  }
-
-  useEffect(() => {
-    draw_svg();
-  }, [draw_svg]);
-
-  useEffect(() => {
-    const handleResize = debounce(() => draw_svg(), 250);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [draw_svg]);
 
   return (
     <div className="flex w-full flex-col justify-center">
