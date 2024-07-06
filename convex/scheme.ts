@@ -10,6 +10,7 @@ export default defineSchema({
     fund_url: v.string(),
     fund_type: v.string(),
     fund_status: v.string(),
+    avatar_url: v.string(),
   }),
   funds: defineTable({
     Date: v.string(),

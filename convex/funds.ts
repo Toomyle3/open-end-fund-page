@@ -134,6 +134,7 @@ export const createFundsInfo = mutation({
         fund_url: v.string(),
         fund_type: v.string(),
         fund_status: v.string(),
+        avatar_url: v.string(),
       })
     ),
   },
@@ -164,6 +165,7 @@ export const createFundsInfo = mutation({
           fund_url: fundData.fund_url,
           fund_type: fundData.fund_type,
           fund_status: fundData.fund_status,
+          avatar_url: fundData.avatar_url,
         };
         return await ctx.db.insert("fundInfo", dataToInsert);
       })
