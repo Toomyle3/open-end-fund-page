@@ -10,16 +10,15 @@ import {
 } from "@/components/ui/card";
 import {
   ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
+  ChartContainer
 } from "@/components/ui/chart";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import React, { useEffect } from "react";
 import moment from "moment";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import React, { useEffect } from "react";
+import { CSVLink } from "react-csv";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface ChartData {
   date: string;
@@ -80,9 +79,9 @@ export function FundDetail() {
             id: item?.id,
             createAt: item?.createAt,
             productId: item?.productId,
-            date: item?.navDate,
-            marketvalue: item?.nav,
-            value: item?.nav,
+            date: moment(item?.navDate).format("YYYY-MM-DD"),
+            marketvalue: parseFloat(item?.nav),
+            value: parseFloat(item?.nav),
           }))
         );
       } catch (error) {
@@ -108,6 +107,14 @@ export function FundDetail() {
       setFromDate(moment().subtract(parseInt(value), "months").format("YYYYMMDD"));
     }
   };
+
+  const csvData = React.useMemo(() => {
+    if (!data) return [];
+    return [
+      ["Date", "NAV"],
+      ...data.map((item: any) => [item.date, item.value]),
+    ];
+  }, [data]);
 
   return (
     <Card>
@@ -159,7 +166,7 @@ export function FundDetail() {
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
+      <CardFooter className="flex items-center justify-between gap-2 text-sm">
         <Select onValueChange={handleMonthChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time range" />
@@ -172,6 +179,13 @@ export function FundDetail() {
             <SelectItem value="36">36 Months</SelectItem>
           </SelectContent>
         </Select>
+        <CSVLink 
+          data={csvData} 
+          filename={`${currentFund?.short_name || 'fund'}_nav_data.csv`}
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+        >
+          Export CSV
+        </CSVLink>
       </CardFooter>
     </Card>
   );

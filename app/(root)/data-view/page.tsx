@@ -1,31 +1,29 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox";
 import DataTable from "@/components/DataTable";
-import { api } from "@/convex/_generated/api";
-import { FundInfoTable } from "@/types";
-import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "convex/react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import DataTableControlPart from "@/components/controlPanel/DataTableControlPart";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
+import { FundInfoTable } from "@/types";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { ColumnDef } from "@tanstack/react-table";
+import { useQuery } from "convex/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
 
 const page = () => {
   const [data, setData] = useState<FundInfoTable[]>();
@@ -140,9 +138,6 @@ const page = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem className="cursor-pointer">
-                Re-Sync data
-              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
                   router.push(`/data-view/${row?.original?.fund_id}`)
