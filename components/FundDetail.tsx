@@ -171,7 +171,24 @@ export function FundDetail() {
                     labelFormatter={(value) =>
                       moment(value).format("YYYY-MM-DD")
                     }
-                    formatter={(value: number) => [value.toFixed(2), "NAV"]}
+                    formatter={(value: number) => [
+                      <>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: "10px",
+                            height: "10px",
+                            borderRadius: "50%",
+                            backgroundColor: "green",
+                            marginRight: "5px",
+                          }}
+                        ></span>
+                        {currentFund?.short_name}
+                        <br />
+                        {value.toFixed(2) + " VND"}
+                      </>,
+                      "NAV",
+                    ]}
                   />
                   <Line
                     type="monotone"
