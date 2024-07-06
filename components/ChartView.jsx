@@ -24,6 +24,7 @@ const ChartView = () => {
   const dataTable = useQuery(api.funds.getAllFunds)?.map(
     ({ _creationTime, _id, Date, ...rest }) => ({
       ...rest,
+      Date: Date,
       date: timeParse(Date),
     })
   );
