@@ -1186,7 +1186,7 @@ const DrawChart = ({
     if (chartData?.length > 0) {
       draw_chart(chartData, chartContainerId, isNavSelected ? "navps" : "cr");
     }
-  }, [chartData, isNavSelected, draw_chart]);
+  }, [chartData, isNavSelected]);
 
   function debounce(func, delay) {
     let timerId;
