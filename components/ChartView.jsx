@@ -11,12 +11,13 @@ import { useQuery } from "convex/react";
 import * as d3 from "d3";
 import { saveAs } from "file-saver";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Skeleton } from "./ui/skeleton";
 import { Switch } from "./ui/switch";
+import { CSVLink } from "react-csv";
 
 const ChartView = () => {
   // Hooks
@@ -32,11 +33,11 @@ const ChartView = () => {
   // States
   const [data, setData] = useState(null);
   const [windowWidth, setWindowWidth] = useState(null);
-  const [selectedData, setSelectedData] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const [isNavSelected, setIsNavSelected] = useState(false);
   const [selectedFunds, setSelectedFunds] = useState(defaultFunds);
   const selected_date = getDateRangeFromText(selectedPeriod);
+  const [selectedData, setSelectedData] = useState([]);
 
   // chart values
   const y_columns = 4;
@@ -49,43 +50,46 @@ const ChartView = () => {
   const r_tooltips_item = 4;
 
   // data handler
-  const filteredData = data?.filter(
-    (d) =>
-      Date.parse(d.Date) >= selected_date[0] &&
-      Date.parse(d.Date) <= selected_date[1]
-  );
-
   function getDateRangeFromText(rangeText) {
     const dateRegex = /\d{4}-\d{2}-\d{2}/g;
     const dates = rangeText.match(dateRegex);
     return dates ? [Date.parse(dates[0]), Date.parse(dates[1])] : [null, null];
   }
 
-  const handleDownloadCsv = () => {
+  const csvData = useMemo(() => {
     if (
       !selected_date ||
       selected_date?.length === 0 ||
       !selectedFunds ||
       selectedFunds.length === 0 ||
-      !selectedData ||
-      selectedData.length === 0
+      !data ||
+      data.length === 0
     ) {
       return;
     }
     const headerWithDate = ["Date", ...selectedFunds];
-    const filteredData = selectedData?.filter(
-      (fund) =>
-        Date.parse(fund?.Date) <= selected_date[1] &&
-        Date.parse(fund?.Date) >= selected_date[0]
-    );
-    const headers = headerWithDate.join(",");
+    const filteredData =
+      selectedData && selectedData?.length > 0
+        ? selectedData?.filter(
+            (fund) =>
+              Date.parse(fund?.Date) <= selected_date[1] &&
+              Date.parse(fund?.Date) >= selected_date[0]
+          )
+        : data
+            ?.filter((fund) =>
+              Object.keys(fund).some((key) => selectedFunds.includes(key))
+            )
+            .filter(
+              (fund) =>
+                Date.parse(fund.Date) <= selected_date[1] &&
+                Date.parse(fund.Date) >= selected_date[0]
+            );
+    // const headers = headerWithDate.join(",");
     const rows = filteredData.map((row) => {
-      return headerWithDate.map((fund) => row[fund]).join(",");
+      return headerWithDate.map((fund) => row[fund]);
     });
-    const csvContent = [headers, ...rows].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "export.csv");
-  };
+    return [headerWithDate, ...rows];
+  }, [data, selected_date, selectedFunds, selectedData]);
 
   // Use Effect
   useEffect(() => {
@@ -99,7 +103,18 @@ const ChartView = () => {
   }, [data, dataTable]);
 
   useEffect(() => {
-    setSelectedData(filteredData);
+    if (data && data?.length > 0) {
+      const defaultData = data
+        ?.filter((fund) =>
+          Object.keys(fund).some((key) => selectedFunds.includes(key))
+        )
+        .filter(
+          (fund) =>
+            Date.parse(fund.Date) <= selected_date[1] &&
+            Date.parse(fund.Date) >= selected_date[0]
+        );
+      setSelectedData(defaultData);
+    }
   }, [data]);
 
   useEffect(() => {
@@ -124,44 +139,59 @@ const ChartView = () => {
           Performance dashboard of open-ended funds in Vietnam
         </h1>
       </div>
-      <div className="flex flex-col justify-center sm:flex-row gap-5 sm:justify-between items-center pl-[55px] pr-[20px]">
-        <div className="flex gap-5">
-          <h4 className="font-[600] text-[16px] font-serif">Chart Type</h4>
-          <Switch
-            id="chart-type"
-            onCheckedChange={(value) => {
-              setIsNavSelected(value);
-            }}
-          />
-          {isNavSelected ? (
-            <Label className="font-[500] text-[16px] font-serif">
-              Net asset value
-            </Label>
-          ) : (
-            <Label className="font-[500] text-[16px] font-serif">% value</Label>
-          )}
-        </div>
-      </div>
-      <div className="flex justify-center">
-        {data || data?.length > 0 ? (
-          <DrawChart
-            // Chart ratio
-            fund_types={fund_types}
-            funds_info={funds_info}
-            zoom_periods={zoom_periods}
-            width_legend_col={width_legend_col}
-            x_nticks={x_nticks}
-            y_nticks={y_nticks}
-            r_tooltips_item={r_tooltips_item}
-            // Csv data
-            chartData={data}
-            // CSV export data collection
-            setSelectedFunds={setSelectedFunds}
-            setSelectedPeriod={setSelectedPeriod}
-            setSelectedData={setSelectedData}
-            windowWidth={windowWidth}
-            isNavSelected={isNavSelected}
-          />
+      <div className="flex justify-center flex-col">
+        {data && data?.length > 0 ? (
+          <>
+            <div className="flex flex-col justify-center sm:flex-row gap-5 sm:justify-between items-center pl-[55px] pr-[20px]">
+              <div className="flex gap-5">
+                <h4 className="font-[600] text-[16px] font-serif">
+                  Chart Type
+                </h4>
+                <Switch
+                  id="chart-type"
+                  onCheckedChange={(value) => {
+                    setIsNavSelected(value);
+                  }}
+                />
+                {isNavSelected ? (
+                  <Label className="font-[500] text-[16px] font-serif">
+                    Net asset value
+                  </Label>
+                ) : (
+                  <Label className="font-[500] text-[16px] font-serif">
+                    % value
+                  </Label>
+                )}
+              </div>
+            </div>
+            <DrawChart
+              // Chart ratio
+              fund_types={fund_types}
+              funds_info={funds_info}
+              zoom_periods={zoom_periods}
+              width_legend_col={width_legend_col}
+              x_nticks={x_nticks}
+              y_nticks={y_nticks}
+              r_tooltips_item={r_tooltips_item}
+              // Csv data
+              chartData={data}
+              // CSV export data collection
+              setSelectedFunds={setSelectedFunds}
+              setSelectedPeriod={setSelectedPeriod}
+              setSelectedData={setSelectedData}
+              windowWidth={windowWidth}
+              isNavSelected={isNavSelected}
+            />
+            <div className="flex justify-center pt-10">
+              <CSVLink
+                data={csvData}
+                filename={`fund_nav_data.csv`}
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+              >
+                Export CSV
+              </CSVLink>
+            </div>
+          </>
         ) : (
           <div
             className="
@@ -186,15 +216,6 @@ const ChartView = () => {
             </Skeleton>
           </div>
         )}
-      </div>
-      <div className="flex justify-center pt-10">
-        <Button
-          className="w-[180px] h-[40px] flex gap-2"
-          onClick={handleDownloadCsv}
-        >
-          <Image src={exportIcon} width={20} height={20} alt="export" />
-          Export CSV
-        </Button>
       </div>
     </section>
   );
