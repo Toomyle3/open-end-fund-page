@@ -1,7 +1,7 @@
 export default {
     providers: [
       {
-        domain: "https://relaxing-monkfish-30.clerk.accounts.dev",
+        domain: "poetic-chimp-18.clerk.accounts.dev",
         applicationID: "convex",
       },
     ]
