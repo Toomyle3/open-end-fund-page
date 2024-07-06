@@ -59,7 +59,7 @@ const ChartView = () => {
   const csvData = useMemo(() => {
     if (
       !selected_date ||
-      selected_date?.length === 0 ||
+      selected_date.length === 0 ||
       !selectedFunds ||
       selectedFunds.length === 0 ||
       !data ||
@@ -67,27 +67,24 @@ const ChartView = () => {
     ) {
       return;
     }
+
+    const [startDate, endDate] = selected_date;
     const headerWithDate = ["Date", ...selectedFunds];
-    const filteredData =
-      selectedData && selectedData?.length > 0
-        ? selectedData?.filter(
-            (fund) =>
-              Date.parse(fund?.Date) <= selected_date[1] &&
-              Date.parse(fund?.Date) >= selected_date[0]
-          )
-        : data
-            ?.filter((fund) =>
-              Object.keys(fund).some((key) => selectedFunds.includes(key))
-            )
-            .filter(
-              (fund) =>
-                Date.parse(fund.Date) <= selected_date[1] &&
-                Date.parse(fund.Date) >= selected_date[0]
-            );
-    // const headers = headerWithDate.join(",");
-    const rows = filteredData.map((row) => {
-      return headerWithDate.map((fund) => row[fund]);
-    });
+
+    const isValidDateRange = (date) =>
+      Date.parse(date) >= startDate && Date.parse(date) <= endDate;
+
+    const filteredData = (
+      selectedData && selectedData.length > 0 ? selectedData : data
+    ).filter(
+      (fund) =>
+        isValidDateRange(fund.Date) && selectedFunds.some((key) => key in fund)
+    );
+
+    const rows = filteredData.map((row) =>
+      headerWithDate.map((fund) => row[fund])
+    );
+
     return [headerWithDate, ...rows];
   }, [data, selected_date, selectedFunds, selectedData]);
 
