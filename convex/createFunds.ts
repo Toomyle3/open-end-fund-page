@@ -58,14 +58,14 @@ export const createFunds = mutation({
     const user = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("email"), identity.email))
-      .first();
+      .collect();
 
-    if (!user) {
+    if (user.length === 0) {
       throw new ConvexError("User not found");
     }
 
     const fundData = {
-      user: user._id,
+      user: user[0]._id,
       Date: args.Date,
       DCDS: args.DCDS,
       DCDE: args.DCDE,
