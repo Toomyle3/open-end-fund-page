@@ -17,13 +17,13 @@ import { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
 import { Skeleton } from "./ui/skeleton";
+import { Switch } from "./ui/switch";
 
 const ChartView = () => {
   // Hooks
   const timeParse = d3.timeParse("%Y-%m-%d");
-  const dataTable = useQuery(api.createFunds.getAllFunds)?.map(
+  const dataTable = useQuery(api.funds.getAllFunds)?.map(
     ({ _creationTime, _id, Date, ...rest }) => ({
       ...rest,
       date: timeParse(Date),

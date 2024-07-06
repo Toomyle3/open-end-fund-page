@@ -14,8 +14,10 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as createFunds from "../createFunds.js";
+import type * as funds from "../funds.js";
+import type * as http from "../http.js";
 import type * as scheme from "../scheme.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,8 +28,10 @@ import type * as scheme from "../scheme.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  createFunds: typeof createFunds;
+  funds: typeof funds;
+  http: typeof http;
   scheme: typeof scheme;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

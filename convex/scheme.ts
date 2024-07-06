@@ -2,6 +2,15 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  fundInfo: defineTable({
+    fund_id: v.number(),
+    name: v.string(),
+    short_name: v.string(),
+    code: v.string(),
+    fund_url: v.string(),
+    fund_type: v.string(),
+    fund_status: v.string(),
+  }),
   funds: defineTable({
     Date: v.string(),
     BVBF: v.union(v.float64(), v.string()),
@@ -52,6 +61,5 @@ export default defineSchema({
     email: v.string(),
     imageUrl: v.string(),
     clerkId: v.string(),
-    name: v.string(),
   }),
 });
