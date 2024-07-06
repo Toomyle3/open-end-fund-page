@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
-import { SignedIn, useClerk, useUser } from "@clerk/clerk-react";
+import { SignedIn, useClerk } from "@clerk/clerk-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,7 +20,6 @@ const SideBar = () => {
   const pathname = usePathname();
   const { signOut } = useClerk();
   const router = useRouter();
-  const { user } = useUser();
 
   return (
     <section className="m-w-[300px]">
@@ -60,12 +59,10 @@ const SideBar = () => {
                 {sidebarLinks.map(({ route, label, imgURL }) => {
                   const isActive =
                     pathname === route || pathname.startsWith(`${route}/`);
-                  const finalRoute =
-                    route === "/profile" ? `/profile/${user?.id}` : route;
                   return (
-                    <SheetClose asChild key={finalRoute}>
+                    <SheetClose asChild key={route}>
                       <Link
-                        href={finalRoute}
+                        href={route}
                         className={cn(
                           "flex gap-3 items-center py-4 px-4 justify-start",
                           {
