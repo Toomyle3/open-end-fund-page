@@ -140,7 +140,7 @@ const page = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer">
                 Re-Sync data
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -150,7 +150,7 @@ const page = () => {
                 className="cursor-pointer"
               >
                 Fund Detail
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );

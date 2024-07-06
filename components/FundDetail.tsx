@@ -9,13 +9,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import React, { useEffect } from "react";
-// import { CSVLink } from "react-csv";
 import moment from "moment";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ChartData {
   date: string;
@@ -67,8 +71,8 @@ export function FundDetail() {
         const data = await response.json();
         setChartData(
           data?.data?.map((item: any) => ({
-            date: item?.navDate,
-            nav: item?.nav,
+            date: moment(item?.navDate).format("YYYY-MM-DD"),
+            nav: parseFloat(item?.nav),
           }))
         );
         setData(
@@ -97,6 +101,14 @@ export function FundDetail() {
     }
   }, [fundInforData]);
 
+  const handleMonthChange = (value: string) => {
+    if (value === "all") {
+      setFromDate(null);
+    } else {
+      setFromDate(moment().subtract(parseInt(value), "months").format("YYYYMMDD"));
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -110,13 +122,57 @@ export function FundDetail() {
         </CardTitle>
         <CardDescription
           className="text-blue-700 cursor-pointer font-[500]"
-          onClick={() => window.open(currentFund?.fund_url, "_black")}
+          onClick={() => window.open(currentFund?.fund_url, "_blank")}
         >
           {currentFund?.fund_url}
         </CardDescription>
       </CardHeader>
-      <CardContent></CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm"></CardFooter>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={chartData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(value) => moment(value).format("MMM DD")}
+              />
+              <YAxis />
+              <Tooltip 
+                labelFormatter={(value) => moment(value).format("YYYY-MM-DD")}
+                formatter={(value: number) => [value.toFixed(2), "NAV"]}
+              />
+              <Line
+                type="monotone"
+                dataKey="nav"
+                stroke="#8884d8"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <Select onValueChange={handleMonthChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select time range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All time</SelectItem>
+            <SelectItem value="3">3 Months</SelectItem>
+            <SelectItem value="6">6 Months</SelectItem>
+            <SelectItem value="12">12 Months</SelectItem>
+            <SelectItem value="36">36 Months</SelectItem>
+          </SelectContent>
+        </Select>
+      </CardFooter>
     </Card>
   );
 }
