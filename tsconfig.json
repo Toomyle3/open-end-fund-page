@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/ChartView.jsx", "assets/data.js", "components/FundDetail.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/ChartView.tsx", "assets/data.js", "components/FundDetail.tsx"],
   "exclude": ["node_modules"]
 }

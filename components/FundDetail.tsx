@@ -18,16 +18,16 @@ import {
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import moment from "moment";
+import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { CSVLink } from "react-csv";
 import {
   CartesianGrid,
   Line,
   LineChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from "recharts";
 import { Skeleton } from "./ui/skeleton";
 
@@ -36,7 +36,29 @@ interface ChartData {
   nav: number;
 }
 
-const chartConfig = {
+interface FundData {
+  id: string;
+  createAt: string;
+  productId: string;
+  date: string;
+  marketvalue: number;
+  value: number;
+}
+
+interface FundInfo {
+  id: string;
+  creationTime: number;
+  fund_id: string;
+  name: string;
+  short_name: string;
+  code: string;
+  fund_url: string;
+  fund_type: string;
+  fund_status: string;
+  avatar_url: string;
+}
+
+const chartConfig: ChartConfig = {
   desktop: {
     label: "Desktop",
     color: "hsl(var(--chart-1))",
@@ -48,14 +70,33 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FundDetail() {
-  const [data, setData] = React.useState<any>();
+  const [data, setData] = React.useState<FundData[]>();
   const [chartData, setChartData] = React.useState<ChartData[]>();
-  const [fromDate, setFromDate] = React.useState<any>(null);
+  const [fromDate, setFromDate] = React.useState<string | null>(null);
   const [currentFund, setCurrentFund] = React.useState<any>();
+  const fundInfoData = useQuery(api.fundInfo.getAllFundInfo);
+  const params = useParams();
+  const fundId = params.fundId;
 
-  const fundInforData = useQuery(api.fundInfo.getAllFundInfo);
-  const fundId = window.location.pathname?.split("/")[2];
+  const handleMonthChange = (value: string) => {
+    if (value === "all") {
+      setFromDate(null);
+    } else {
+      setFromDate(
+        moment().subtract(parseInt(value), "months").format("YYYYMMDD")
+      );
+    }
+  };
 
+  const csvData = React.useMemo(() => {
+    if (!data) return [];
+    return [
+      ["Date", currentFund?.short_name],
+      ...data.map((item) => [item.date, item.value]),
+    ];
+  }, [data]);
+
+  // Use Effect
   React.useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,20 +121,28 @@ export function FundDetail() {
         }
         const data = await response.json();
         setChartData(
-          data?.data?.map((item: any) => ({
+          data?.data?.map((item: { navDate: string; nav: string }) => ({
             date: moment(item?.navDate).format("YYYY-MM-DD"),
             nav: parseFloat(item?.nav),
           }))
         );
         setData(
-          data?.data?.map((item: any) => ({
-            id: item?.id,
-            createAt: item?.createAt,
-            productId: item?.productId,
-            date: moment(item?.navDate).format("YYYY-MM-DD"),
-            marketvalue: parseFloat(item?.nav),
-            value: parseFloat(item?.nav),
-          }))
+          data?.data?.map(
+            (item: {
+              id: string;
+              createAt: string;
+              productId: string;
+              navDate: string;
+              nav: string;
+            }) => ({
+              id: item?.id,
+              createAt: item?.createAt,
+              productId: item?.productId,
+              date: moment(item?.navDate).format("YYYY-MM-DD"),
+              marketvalue: parseFloat(item?.nav),
+              value: parseFloat(item?.nav),
+            })
+          )
         );
       } catch (error) {
         console.error("Fetch error:", error);
@@ -104,30 +153,13 @@ export function FundDetail() {
   }, [fundId, currentFund, fromDate]);
 
   useEffect(() => {
-    if (fundInforData) {
-      setCurrentFund(
-        fundInforData?.find((fund: any) => fund.fund_id == fundId)
+    if (fundInfoData && fundId) {
+      const matchingFund = fundInfoData.find(
+        (fund) => fund.fund_id === Number(fundId)
       );
+      setCurrentFund(matchingFund);
     }
-  }, [fundInforData]);
-
-  const handleMonthChange = (value: string) => {
-    if (value === "all") {
-      setFromDate(null);
-    } else {
-      setFromDate(
-        moment().subtract(parseInt(value), "months").format("YYYYMMDD")
-      );
-    }
-  };
-
-  const csvData = React.useMemo(() => {
-    if (!data) return [];
-    return [
-      ["Date", currentFund?.short_name],
-      ...data.map((item: any) => [item.date, item.value]),
-    ];
-  }, [data]);
+  }, [fundInfoData, fundId]);
 
   return (
     <section>
@@ -151,53 +183,49 @@ export function FundDetail() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart
-                  data={chartData}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={(value) => moment(value).format("MMM DD")}
-                  />
-                  <YAxis />
-                  <Tooltip
-                    labelFormatter={(value) =>
-                      moment(value).format("YYYY-MM-DD")
-                    }
-                    formatter={(value: number) => [
-                      <>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            width: "10px",
-                            height: "10px",
-                            borderRadius: "50%",
-                            backgroundColor: "green",
-                            marginRight: "5px",
-                          }}
-                        ></span>
-                        {currentFund?.short_name}
-                        <br />
-                        {value.toFixed(2) + " VND"}
-                      </>,
-                      "NAV",
-                    ]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="nav"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <LineChart
+                data={chartData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) => moment(value).format("MMM DD")}
+                />
+                <YAxis />
+                <Tooltip
+                  labelFormatter={(value) => moment(value).format("YYYY-MM-DD")}
+                  formatter={(value: number) => [
+                    <>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "50%",
+                          backgroundColor: "green",
+                          marginRight: "5px",
+                        }}
+                      ></span>
+                      {currentFund?.short_name}
+                      <br />
+                      {value.toFixed(2) + " VND"}
+                    </>,
+                    "NAV",
+                  ]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="nav"
+                  stroke="#8884d8"
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
             </ChartContainer>
           </CardContent>
           <CardFooter className="flex items-center justify-between gap-2 text-sm">
