@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 export default defineSchema({
   fundInfo: defineTable({
+    user: v.string(),
     fund_id: v.number(),
     name: v.string(),
     short_name: v.string(),

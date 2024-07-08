@@ -27,7 +27,7 @@ import {
   LineChart,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
 } from "recharts";
 import { Skeleton } from "./ui/skeleton";
 
