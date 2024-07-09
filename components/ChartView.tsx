@@ -139,7 +139,7 @@ const ChartView: React.FC = () => {
       className={`w-full justify-center text-center flex flex-col ${
         windowWidth && windowWidth > 550
           ? "pl-[20px] pr-[20px] pb-[60px] pt-[60px]"
-          : "pl-[5px] pr-[5px]"
+          : "pl-0 pr-0"
       }`}
     >
       <div className="flex justify-center pb-10">
@@ -150,7 +150,7 @@ const ChartView: React.FC = () => {
       <div className="flex justify-center flex-col">
         {data && data.length > 0 ? (
           <>
-            <div className="flex flex-col justify-center sm:flex-row gap-5 sm:justify-between items-center pl-[55px] pr-[20px]">
+            <div className="flex flex-col pb-5 justify-center sm:flex-row gap-5 sm:justify-between items-center pl-[55px] pr-[20px]">
               <div className="flex gap-5">
                 <h4 className="font-[600] text-[16px] font-serif">
                   Chart Type

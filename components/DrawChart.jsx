@@ -29,8 +29,8 @@ const DrawChart = ({
         bottom: 30,
         left: windowWidth > 550 ? 40 : 0,
       };
-      this.w = windowWidth > 550 ? windowWidth - 160 : windowWidth - 10;
-      this.h = 1200;
+      this.w = windowWidth > 550 ? windowWidth - 160 : windowWidth - 40;
+      this.h = 1270;
     })(),
     layout_top_line = new (function () {
       this.margin = {
@@ -56,11 +56,11 @@ const DrawChart = ({
       this.w = layout_main_chart.w;
       this.h = 60;
       this.x = 0;
-      this.y = 620;
+      this.y = 640;
     })(),
     layout_legends = {
       x: 10,
-      y: 740,
+      y: 750,
       w: windowWidth,
       h: 400,
     };
