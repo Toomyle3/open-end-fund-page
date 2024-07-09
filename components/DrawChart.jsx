@@ -27,9 +27,9 @@ const DrawChart = ({
         top: 30,
         right: windowWidth > 550 ? 30 : 0,
         bottom: 30,
-        left: windowWidth > 550 ? 40 : 0,
+        left: 40,
       };
-      this.w = windowWidth > 550 ? windowWidth - 160 : windowWidth - 40;
+      this.w = windowWidth > 550 ? windowWidth - 160 : windowWidth - 80;
       this.h = 1270;
     })(),
     layout_top_line = new (function () {
@@ -59,7 +59,7 @@ const DrawChart = ({
       this.y = 640;
     })(),
     layout_legends = {
-      x: 10,
+      x: -20,
       y: 750,
       w: windowWidth,
       h: 400,
