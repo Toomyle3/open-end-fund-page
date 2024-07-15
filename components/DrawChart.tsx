@@ -339,7 +339,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     return (
       <div className="flex w-full flex-col justify-center items-center">
         <div
-          className="flex justify-start 
+          className="flex w-full max-w-[800px] justify-start 
         items-center pb-4 gap-4 
         flex-col sm:flex-row"
         >
