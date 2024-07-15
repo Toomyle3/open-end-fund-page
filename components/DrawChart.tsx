@@ -1,6 +1,10 @@
 "use client";
-import { PERIODS } from "@/constants";
+import { defaultFunds, funds_info, PERIODS } from "@/constants";
+import { cn } from "@/lib/utils";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import * as d3 from "d3";
+import JSZip from "jszip";
+import FileSaver from "file-saver";
 import { format } from "date-fns";
 import { ColorType, createChart, IChartApi, Time } from "lightweight-charts";
 import { CalendarFold, Cog } from "lucide-react";
@@ -15,7 +19,15 @@ import React, {
 import "./index.css";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
+import { Checkbox } from "./ui/checkbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CSVLink } from "react-csv";
+import moment from "moment";
 
 interface FundData {
   date: number;
@@ -25,19 +37,20 @@ interface FundData {
 interface DrawChartProps {
   chartData: FundData[];
   initialHeight?: number;
-  initialWidth?: number;
   screenWidth: number;
 }
 
 const DrawChart: React.FC<DrawChartProps> = memo(
-  ({ chartData, screenWidth, initialHeight = 600, initialWidth = 800 }) => {
+  ({ chartData, screenWidth, initialHeight = 600 }) => {
     // States
     const [data, setData] = useState<FundData[]>([]);
     const [selectedPeriod, setSelectedPeriod] = useState(PERIODS[6]);
+    const [selectedFunds, setSelectedFunds] = useState<string[]>(defaultFunds);
+    const [isOpen, setIsOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isNavSelected, setIsNavSelected] = useState(false);
     const [chartHeight, setChartHeight] = useState(initialHeight);
-    const [chartWidth, setChartWidth] = useState(initialWidth);
+    const [chartWidth, setChartWidth] = useState(screenWidth - 100);
     const [dateRange, setDateRange] = useState<{
       from: Date | undefined;
       to: Date | undefined;
@@ -52,7 +65,10 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     const resizeRef = useRef<HTMLDivElement>(null);
 
     const colorScales = useMemo(
-      () => d3.scaleSequential(d3.interpolateRainbow).domain([0, 50]),
+      () =>
+        d3
+          .scaleSequential(d3.interpolateRainbow)
+          .domain([0, selectedFunds.length]),
       []
     );
 
@@ -69,10 +85,22 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         startDate = now - selectedPeriod.days * 24 * 60 * 60;
       }
 
-      return data.filter(
-        (item) => item.date >= startDate && item.date <= endDate
-      );
-    }, [data, dateRange, selectedPeriod]);
+      const selectedData = data
+        .map((fund) => {
+          const filteredFund: any = { date: fund.date };
+          Object.keys(fund).forEach((key) => {
+            if (selectedFunds.includes(key)) {
+              filteredFund[key] = fund[key];
+            }
+          });
+          return filteredFund;
+        })
+        .filter((fund) => Object.keys(fund).length > 1);
+
+      return selectedData.filter((item) => {
+        return item.date >= startDate && item.date <= endDate;
+      });
+    }, [data, dateRange, selectedPeriod, selectedFunds]);
 
     const handlePeriodSelect = (period: (typeof PERIODS)[number]) => {
       setSelectedPeriod(period);
@@ -123,6 +151,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       uniqueFunds.forEach((fund, index) => {
         const series = chart.addLineSeries({
           color: colorScales(index),
+          lineWidth: 1,
           title: fund,
         });
 
@@ -167,7 +196,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         } else {
           const date = new Date(param.time * 1000);
           const dateStr = format(date, "MMM dd, yyyy");
-          let tooltipContent = `<div>${dateStr}</div><div>Fund - Return</div>`;
+          let tooltipContent = `<div>${dateStr}</div><div>Fund -> Return</div>`;
           param.seriesData?.forEach((value: any, seriesApi: any) => {
             const color = seriesApi.options().color as string;
             const tooltipValue = isNavSelected
@@ -193,6 +222,33 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       screenWidth,
       isNavSelected,
     ]);
+
+    const handleExportCSV = () => {
+      if (
+        !selectedFunds ||
+        selectedFunds.length === 0 ||
+        !filteredData ||
+        filteredData.length === 0
+      ) {
+        return;
+      }
+      const zip = new JSZip();
+      selectedFunds.forEach((fund) => {
+        const header = ["date", fund];
+        const rows = filteredData
+          .filter((row) => row[fund] !== undefined && row[fund] !== null)
+          .map((row) => [
+            moment(row.date * 1000).format("YYYY-MM-DD"),
+            row[fund],
+          ]);
+        const csvContent = [header, ...rows].map((e) => e.join(",")).join("\n");
+        zip.file(`${fund}.csv`, csvContent);
+      });
+
+      zip.generateAsync({ type: "blob" }).then((content) => {
+        FileSaver.saveAs(content, "funds_data.zip");
+      });
+    };
 
     // Use Effect
     useEffect(() => {
@@ -363,6 +419,81 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             height={20}
             className="screen-resize"
           />
+        </div>
+        <div className="pt-10">
+          <Collapsible
+            open={isOpen}
+            onOpenChange={setIsOpen}
+            className={cn("w-full bg-gray-600 text-white rounded", {
+              "h-[50px]": !isOpen,
+            })}
+          >
+            <CollapsibleTrigger asChild className="flex cursor-pointer">
+              <div className="flex items-center justify-between px-4 h-[50px]">
+                <h4 className="font-[500] font-serif pl-[20px]">
+                  Show All Funds
+                </h4>
+                <CaretSortIcon className="h-4 w-4" />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent
+              style={{
+                padding: "0px 40px 40px 40px",
+              }}
+              className="collapsible-items w-full flex justify-center items-center gap-4"
+            >
+              <div
+                className="
+                    w-full
+                grid grid-cols-2 
+                gap-6 sm:grid-cols-4 
+                pt-10
+                "
+              >
+                {funds_info?.map((fund) => {
+                  return (
+                    <div key={fund.name} className="flex items-center gap-2">
+                      <Checkbox
+                        className="bg-white"
+                        checked={selectedFunds.includes(fund.name)}
+                        onCheckedChange={(value) => {
+                          if (value) {
+                            setSelectedFunds((prev) => {
+                              return [...prev, fund.name];
+                            });
+                          } else {
+                            setSelectedFunds((prev) => {
+                              return prev.filter(
+                                (value) => value !== fund.name
+                              );
+                            });
+                          }
+                        }}
+                      />
+                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {fund.name}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+        <div className="flex justify-center pt-10">
+          <Button
+            className="w-[200px] h-[40px] text-sm font-medium text-white bg-primary hover:bg-primary/90"
+            onClick={handleExportCSV}
+          >
+            Export CSV
+          </Button>
+          {/* <CSVLink
+            data={csvData || []}
+            filename="fund_nav_data.csv"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+          >
+            Export CSV
+          </CSVLink> */}
         </div>
       </div>
     );

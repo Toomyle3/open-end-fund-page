@@ -8,6 +8,7 @@ import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Skeleton } from "./ui/skeleton";
+import { CSVLink } from "react-csv";
 
 const ChartView: React.FC = () => {
   const dataTable = useQuery(api.funds.getAllFunds)?.map(
@@ -34,39 +35,6 @@ const ChartView: React.FC = () => {
   );
   const [data, setData] = useState<FundData[] | null>(null);
   const [windowWidth, setWindowWidth] = useState<number | null>(null);
-
-  // const csvData = useMemo(() => {
-  //   if (
-  //     !selected_date ||
-  //     selected_date.length !== 2 ||
-  //     !selectedFunds ||
-  //     selectedFunds.length === 0 ||
-  //     !data ||
-  //     data.length === 0
-  //   ) {
-  //     return;
-  //   }
-
-  //   const [startDate, endDate] = selected_date;
-  //   const headerWithDate = ["Date", ...selectedFunds];
-
-  //   const isValidDateRange = (date: string) =>
-  //     startDate !== null &&
-  //     endDate !== null &&
-  //     Date.parse(date) >= startDate &&
-  //     Date.parse(date) <= endDate;
-
-  //   const filteredData = (selectedData.length > 0 ? selectedData : data).filter(
-  //     (fund) =>
-  //       isValidDateRange(fund.Date) && selectedFunds.some((key) => key in fund)
-  //   );
-
-  //   const rows = filteredData.map((row) =>
-  //     headerWithDate.map((fund) => row[fund])
-  //   );
-
-  //   return [headerWithDate, ...rows];
-  // }, [data, selected_date, selectedFunds, selectedData]);
 
   useEffect(() => {
     if (
@@ -102,18 +70,7 @@ const ChartView: React.FC = () => {
       </div>
       <div className="flex justify-center flex-col">
         {data && data.length > 0 ? (
-          <>
-            <DrawChart chartData={data} screenWidth={windowWidth as number} />
-            {/* <div className="flex justify-center pt-10">
-              <CSVLink
-                data={csvData || []}
-                filename="fund_nav_data.csv"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-              >
-                Export CSV
-              </CSVLink>
-            </div> */}
-          </>
+          <DrawChart chartData={data} screenWidth={windowWidth as number} />
         ) : (
           <div className="pt-10 h-[600px] flex justify-center w-full items-center text-black text-[30px] font-[25px] font-serif">
             <Skeleton className="h-[600px] w-screen rounded-xl flex justify-center items-center">
