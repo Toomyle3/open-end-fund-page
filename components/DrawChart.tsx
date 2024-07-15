@@ -3,11 +3,12 @@ import { defaultFunds, funds_info, PERIODS } from "@/constants";
 import { cn } from "@/lib/utils";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import * as d3 from "d3";
-import JSZip from "jszip";
-import FileSaver from "file-saver";
 import { format } from "date-fns";
+import FileSaver from "file-saver";
+import JSZip from "jszip";
 import { ColorType, createChart, IChartApi, Time } from "lightweight-charts";
-import { CalendarFold, Cog } from "lucide-react";
+import { CalendarFold, Expand } from "lucide-react";
+import moment from "moment";
 import React, {
   memo,
   useCallback,
@@ -25,9 +26,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CSVLink } from "react-csv";
-import moment from "moment";
 
 interface FundData {
   date: number;
@@ -112,6 +112,11 @@ const DrawChart: React.FC<DrawChartProps> = memo(
 
       if (chartRef.current) {
         chartRef.current.remove();
+        const tooltips = document.getElementsByClassName("tooltip-chart");
+
+        Array.from(tooltips).forEach((tooltip) => {
+          tooltip.remove();
+        });
       }
 
       const chart = createChart(chartContainerRef.current, {
@@ -196,19 +201,26 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         } else {
           const date = new Date(param.time * 1000);
           const dateStr = format(date, "MMM dd, yyyy");
-          let tooltipContent = `<div>${dateStr}</div><div>Fund -> Return</div>`;
+          let tooltipContent = `<div>${dateStr}</div><div style="display:flex; justify-content:space-between;"><div>Fund</div><div>Return</div></div>`;
           param.seriesData?.forEach((value: any, seriesApi: any) => {
             const color = seriesApi.options().color as string;
             const tooltipValue = isNavSelected
               ? `${value.value.toFixed(2)} VND`
               : `${value.value.toFixed(2)} %`;
-            tooltipContent += `<div style="color:${color}">${seriesApi.options().title}: ${tooltipValue}</div>`;
+            tooltipContent += `<div style="color:${color}; display:flex; justify-content:space-between;"><div>${seriesApi.options().title}:</div><div>${tooltipValue}</div></div>`;
           });
 
           toolTip.style.display = "block";
           toolTip.innerHTML = tooltipContent;
-          toolTip.style.left = `${param.point.x}px`;
-          toolTip.style.top = `${param.point.y}px`;
+          if (param.point.x >= chartWidth - 200) {
+            toolTip.style.transform = "translate(-100%, -50%)";
+            toolTip.style.left = `${param.point.x}px`;
+            toolTip.style.top = `${param.point.y}px`;
+          } else {
+            toolTip.style.transform = "translate(10%, -50%)";
+            toolTip.style.left = `${param.point.x}px`;
+            toolTip.style.top = `${param.point.y}px`;
+          }
         }
       });
 
@@ -222,6 +234,14 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       screenWidth,
       isNavSelected,
     ]);
+
+    const fundsByType: any = {};
+    funds_info.forEach((fund: any) => {
+      if (!fundsByType[fund.type]) {
+        fundsByType[fund.type] = [];
+      }
+      fundsByType[fund.type].push(fund);
+    });
 
     const handleExportCSV = () => {
       if (
@@ -413,7 +433,10 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             style={{ width: "100%", height: "100%" }}
             className="border border-gray-600"
           ></div>
-          <Cog
+          <Expand
+            style={{
+              color: isDarkMode ? "white" : "black",
+            }}
             ref={resizeRef as any}
             width={20}
             height={20}
@@ -443,39 +466,50 @@ const DrawChart: React.FC<DrawChartProps> = memo(
               className="collapsible-items w-full flex justify-center items-center gap-4"
             >
               <div
-                className="
-                    w-full
-                grid grid-cols-2 
+                className="w-full
+                flex justify-around
+                 grid-cols-2 
                 gap-6 sm:grid-cols-4 
-                pt-10
-                "
+                pt-4"
               >
-                {funds_info?.map((fund) => {
-                  return (
-                    <div key={fund.name} className="flex items-center gap-2">
-                      <Checkbox
-                        className="bg-white"
-                        checked={selectedFunds.includes(fund.name)}
-                        onCheckedChange={(value) => {
-                          if (value) {
-                            setSelectedFunds((prev) => {
-                              return [...prev, fund.name];
-                            });
-                          } else {
-                            setSelectedFunds((prev) => {
-                              return prev.filter(
-                                (value) => value !== fund.name
-                              );
-                            });
-                          }
-                        }}
-                      />
-                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        {fund.name}
-                      </label>
-                    </div>
-                  );
-                })}
+                {Object.keys(fundsByType).map((type) => (
+                  <div key={type} className="flex flex-col gap-2">
+                    <h2 className="flex font-math justify-start text-lg font-[500] mb-4">
+                      {type}
+                    </h2>
+                    {fundsByType[type].map((fund: any) => (
+                      <div
+                        key={fund.name}
+                        className="font-math flex items-center gap-4"
+                      >
+                        <Checkbox
+                          id={fund.name}
+                          className="bg-white"
+                          checked={selectedFunds.includes(fund.name)}
+                          onCheckedChange={(value) => {
+                            if (value) {
+                              setSelectedFunds((prev) => {
+                                return [...prev, fund.name];
+                              });
+                            } else {
+                              setSelectedFunds((prev) => {
+                                return prev.filter(
+                                  (value) => value !== fund.name
+                                );
+                              });
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={fund.name}
+                          className="text-sm font-medium leading-none"
+                        >
+                          {fund.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -487,13 +521,6 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           >
             Export CSV
           </Button>
-          {/* <CSVLink
-            data={csvData || []}
-            filename="fund_nav_data.csv"
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-          >
-            Export CSV
-          </CSVLink> */}
         </div>
       </div>
     );
