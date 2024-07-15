@@ -55,8 +55,8 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       from: Date | undefined;
       to: Date | undefined;
     }>({
-      from: undefined,
-      to: undefined,
+      from: new Date(1621848890 * 1000),
+      to: new Date(1716543290 * 1000),
     });
 
     // Refs
@@ -69,7 +69,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         d3
           .scaleSequential(d3.interpolateRainbow)
           .domain([0, selectedFunds.length]),
-      []
+      [selectedFunds]
     );
 
     const filteredData = useMemo(() => {
@@ -456,7 +456,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
                 <h4 className="font-[500] font-serif pl-[20px]">
                   Show All Funds
                 </h4>
-                <CaretSortIcon className="h-4 w-4" />
+                <CaretSortIcon className="h-6 w-6" />
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent
