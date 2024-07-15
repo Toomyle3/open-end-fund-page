@@ -22,3 +22,10 @@
   border-radius: 5px;
   z-index: 1000;
 }
+
+.onHover {
+  &:hover {
+    background-color: #4b5563 !important;
+    color: #ffffff !important;
+  }
+}

@@ -50,7 +50,9 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isNavSelected, setIsNavSelected] = useState(false);
     const [chartHeight, setChartHeight] = useState(initialHeight);
-    const [chartWidth, setChartWidth] = useState(screenWidth - 100);
+    const [chartWidth, setChartWidth] = useState(
+      screenWidth < 1000 ? screenWidth - 100 : 800
+    );
     const [dateRange, setDateRange] = useState<{
       from: Date | undefined;
       to: Date | undefined;
@@ -335,7 +337,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     }, []);
 
     return (
-      <div className="flex w-full flex-col justify-center">
+      <div className="flex w-full flex-col justify-center items-center">
         <div
           className="flex justify-start 
         items-center pb-4 gap-4 
@@ -346,7 +348,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
               <Button
                 key={period.label}
                 onClick={() => handlePeriodSelect(period)}
-                className={`text-[12px] text-gray-700 flex 
+                className={`text-[12px] text-gray-700 onHover flex 
       justify-center items-center 
       h-[40px] w-[40px] rounded ${
         selectedPeriod === period && !dateRange?.from
@@ -361,7 +363,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           <div className="h-[40px]">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className="onHover">
                   {dateRange?.from ? (
                     dateRange?.to ? (
                       <>
@@ -396,7 +398,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           <div className="flex">
             <Button
               id="chart-mode"
-              className="h-[40px] w-[100px] text-sm"
+              className="h-[40px] w-[100px] onHover text-sm"
               style={{
                 background: isDarkMode ? "#111827" : "#ffffff",
                 color: isDarkMode ? "#ffffff" : "#111827",
@@ -412,7 +414,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           <div className="flex">
             <Button
               id="chart-mode"
-              className="h-[40px] min-w-[100px] text-[#111827] 
+              className="onHover h-[40px] min-w-[100px] text-[#111827] 
               text-sm bg-[#ffffff] 
               border border-[#111827]"
               onClick={(value) => setIsNavSelected(!isNavSelected)}
@@ -422,6 +424,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           </div>
         </div>
         <div
+          className="flex"
           style={{
             position: "relative",
             width: `${chartWidth}px`,
@@ -443,7 +446,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             className="screen-resize"
           />
         </div>
-        <div className="pt-10">
+        <div className="pt-10 w-full flex max-w-[800px]">
           <Collapsible
             open={isOpen}
             onOpenChange={setIsOpen}
@@ -474,13 +477,13 @@ const DrawChart: React.FC<DrawChartProps> = memo(
               >
                 {Object.keys(fundsByType).map((type) => (
                   <div key={type} className="flex flex-col gap-2">
-                    <h2 className="flex font-math justify-start text-lg font-[500] mb-4">
+                    <h2 className="flex font-serif justify-start text-lg font-[500] mb-4">
                       {type}
                     </h2>
                     {fundsByType[type].map((fund: any) => (
                       <div
                         key={fund.name}
-                        className="font-math flex items-center gap-4"
+                        className="font-serif flex items-center gap-4"
                       >
                         <Checkbox
                           id={fund.name}
