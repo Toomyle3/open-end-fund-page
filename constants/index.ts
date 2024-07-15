@@ -44,8 +44,6 @@ export const funds_info = [
   { name: "FUEKIVFS", type: "ETF", company: "KIM" },
 ];
 
-export const zoom_periods = ["1M", "3M", "6M", "YTD", "1Y", "3Y", "All"];
-
 export const fund_types = ["Index", "ETF", "Active", "Bond"];
 
 export const defaultFunds = ["VNINDEX", "DCDS", "E1VFVN30", "TCEF", "VESAF"];
@@ -61,4 +59,14 @@ export const sidebarLinks = [
     route: "/data-view",
     label: "Date View",
   },
+];
+
+export const PERIODS = [
+  { label: "1M", days: 30 },
+  { label: "3M", days: 90 },
+  { label: "6M", days: 180 },
+  { label: "1Y", days: 365 },
+  { label: "3Y", days: 1095 },
+  { label: "5Y", days: 1825 },
+  { label: "All", days: Infinity },
 ];

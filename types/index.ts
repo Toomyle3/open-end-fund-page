@@ -8,3 +8,8 @@ export type FundInfoTable = {
   fund_status: string;
   avatar_url: string;
 };
+
+export type FundData = {
+  date: number;
+  [key: string]: any;
+};

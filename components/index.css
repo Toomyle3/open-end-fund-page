@@ -1,0 +1,21 @@
+.screen-resize {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  transform: rotate(-40deg);
+  cursor: nwse-resize;
+}
+
+.tooltip-chart {
+  position: absolute;
+  display: none;
+  padding: 8px;
+  box-sizing: border-box;
+  font-size: 13px;
+  color: black;
+  background: rgba(240, 239, 239, 0.8);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(10%, -50%);
+}
