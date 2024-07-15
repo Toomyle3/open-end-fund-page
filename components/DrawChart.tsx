@@ -51,7 +51,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     const [isNavSelected, setIsNavSelected] = useState(false);
     const [chartHeight, setChartHeight] = useState(initialHeight);
     const [chartWidth, setChartWidth] = useState(
-      screenWidth < 1000 ? screenWidth - 100 : 800
+      screenWidth < 1000 ? screenWidth - 40 : 800
     );
     const [dateRange, setDateRange] = useState<{
       from: Date | undefined;
@@ -122,8 +122,8 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       }
 
       const chart = createChart(chartContainerRef.current, {
-        width: chartWidth,
-        height: chartHeight,
+        width: chartWidth < 0 ? 0 : chartWidth,
+        height: chartHeight < 0 ? 0 : chartHeight,
         layout: {
           textColor: isDarkMode ? "white" : "black",
           background: {
@@ -301,6 +301,34 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       let isResizing = false;
       let startX: number, startY: number;
 
+      const onTouchStart = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        isResizing = true;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        document.addEventListener("touchmove", onTouchMove);
+        document.addEventListener("touchend", onTouchEnd);
+      };
+
+      const onTouchMove = (e: TouchEvent) => {
+        if (!isResizing) return;
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+
+        setChartWidth((prev) => prev + deltaX);
+        setChartHeight((prev) => prev + deltaY);
+
+        startX = touch.clientX;
+        startY = touch.clientY;
+      };
+
+      const onTouchEnd = () => {
+        isResizing = false;
+        document.removeEventListener("touchmove", onTouchMove);
+        document.removeEventListener("touchend", onTouchEnd);
+      };
+
       const onMouseDown = (e: MouseEvent) => {
         isResizing = true;
         startX = e.clientX;
@@ -327,14 +355,20 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         document.removeEventListener("mouseup", onMouseUp);
       };
 
-      resizeHandle.addEventListener("mousedown", onMouseDown);
-
+      if (screenWidth < 500) {
+        resizeHandle.addEventListener("touchstart", onTouchStart);
+      } else {
+        resizeHandle.addEventListener("mousedown", onMouseDown);
+      }
       return () => {
         resizeHandle.removeEventListener("mousedown", onMouseDown);
+        resizeHandle.removeEventListener("touchstart", onTouchStart);
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
+        document.removeEventListener("touchmove", onTouchMove);
+        document.removeEventListener("touchend", onTouchEnd);
       };
-    }, []);
+    }, [resizeRef, screenWidth]);
 
     return (
       <div className="flex w-full flex-col justify-center items-center">
@@ -433,7 +467,10 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         >
           <div
             ref={chartContainerRef}
-            style={{ width: "100%", height: "100%" }}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
             className="border border-gray-600"
           ></div>
           <Expand
@@ -470,9 +507,10 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             >
               <div
                 className="w-full
-                flex justify-around
-                 grid-cols-2 
+                sm:flex sm:justify-around
+                 grid grid-cols-2 
                 gap-6 sm:grid-cols-4 
+                max-h-[500px] overflow-auto
                 pt-4"
               >
                 {Object.keys(fundsByType).map((type) => (
