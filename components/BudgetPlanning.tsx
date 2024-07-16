@@ -242,6 +242,7 @@ const BudgetPlanning = () => {
                           <Input
                             type="number"
                             min={0}
+                            max={100000}
                             className="inputStyles w-full"
                             placeholder="Initial investment"
                             {...field}
@@ -274,6 +275,7 @@ const BudgetPlanning = () => {
                           <Input
                             type="number"
                             min={0}
+                            max={1000}
                             className="inputStyles"
                             placeholder="Annual rate"
                             {...field}
@@ -305,7 +307,8 @@ const BudgetPlanning = () => {
                         <FormControl>
                           <Input
                             type="number"
-                            min={0}
+                            min={1}
+                            max={12}
                             className="inputStyles"
                             placeholder="Compounding frequency"
                             {...field}
@@ -331,6 +334,7 @@ const BudgetPlanning = () => {
                           <Input
                             type="number"
                             min={0}
+                            max={200}
                             className="inputStyles"
                             placeholder="Investing time"
                             {...field}
@@ -363,6 +367,7 @@ const BudgetPlanning = () => {
                           <Input
                             type="number"
                             min={0}
+                            max={100000}
                             className="inputStyles"
                             placeholder="Payment amount"
                             {...field}
