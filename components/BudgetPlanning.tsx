@@ -133,7 +133,7 @@ const BudgetPlanning = () => {
             label={{ value: "Year", position: "insideBottom", offset: -5 }}
           />
           <YAxis
-            label={{ value: "Million VND", angle: -90, position: "insideLeft" }}
+            label={{ value: "Million VND", angle: -90, position: "insideBottom" }}
           />
           <ChartTooltip content={<ChartTooltipContent nameKey="endValue" />} />
           <Bar
