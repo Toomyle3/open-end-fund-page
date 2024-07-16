@@ -408,7 +408,12 @@ const BudgetPlanning = () => {
               Great! After {results[results.length - 1].year} years of
               disciplined and regular monthly investment, you will have an
               amount of {results[results.length - 1].endValue.toFixed(2)}{" "}
-              million VND.
+              million VND which is ~{" "}
+              {(
+                (results[results.length - 1].endValue * 100) /
+                parseInt(form.watch("initialValue"))
+              ).toFixed(0)}
+              % .
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col md:flex-row gap-8 p-[20px]">
