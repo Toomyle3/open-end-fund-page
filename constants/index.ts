@@ -1,3 +1,23 @@
+// sidebar
+export const sidebarLinks = [
+  {
+    imgURL: "/icons/home.svg",
+    route: "/",
+    label: "Home",
+  },
+  {
+    imgURL: "/icons/data_view.svg",
+    route: "/data-view",
+    label: "Date View",
+  },
+  {
+    imgURL: "/icons/calculator.svg",
+    route: "/planning-tool",
+    label: "Budget Planning Tool",
+  },
+];
+
+// Chart Info
 export const funds_info = [
   { name: "VNINDEX", type: "Index" },
   { name: "VN30", type: "Index" },
@@ -47,19 +67,6 @@ export const funds_info = [
 export const fund_types = ["Index", "ETF", "Equity Fund", "Bond"];
 
 export const defaultFunds = ["VNINDEX", "DCDS"];
-
-export const sidebarLinks = [
-  {
-    imgURL: "/icons/home.svg",
-    route: "/",
-    label: "Home",
-  },
-  {
-    imgURL: "/icons/data_view.svg",
-    route: "/data-view",
-    label: "Date View",
-  },
-];
 
 export const PERIODS = [
   { label: "1M", days: 30 },
