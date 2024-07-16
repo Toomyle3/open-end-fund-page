@@ -28,17 +28,7 @@ import {
 } from "./ui/collapsible";
 import { Label } from "./ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-
-interface FundData {
-  date: number;
-  [key: string]: number;
-}
-
-interface DrawChartProps {
-  chartData: FundData[];
-  initialHeight?: number;
-  screenWidth: number;
-}
+import { DrawChartProps, FundData } from "@/types";
 
 const DrawChart: React.FC<DrawChartProps> = memo(
   ({ chartData, screenWidth, initialHeight = 600 }) => {
@@ -65,7 +55,6 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     const chartRef = useRef<IChartApi | null>(null);
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const resizeRef = useRef<HTMLDivElement>(null);
-
     const colorScales = useMemo(
       () =>
         d3

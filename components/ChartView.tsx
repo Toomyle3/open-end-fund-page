@@ -1,14 +1,11 @@
 "use client";
-
-import { defaultFunds } from "@/constants";
 import { api } from "@/convex/_generated/api";
 import { FundData } from "@/types";
 import { useQuery } from "convex/react";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Skeleton } from "./ui/skeleton";
-import { CSVLink } from "react-csv";
 
 const ChartView: React.FC = () => {
   const dataTable = useQuery(api.funds.getAllFunds)?.map(

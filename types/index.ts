@@ -11,5 +11,11 @@ export type FundInfoTable = {
 
 export type FundData = {
   date: number;
-  [key: string]: any;
+  [key: string]: number;
+};
+
+export type DrawChartProps = {
+  chartData: FundData[];
+  initialHeight?: number;
+  screenWidth: number;
 };
