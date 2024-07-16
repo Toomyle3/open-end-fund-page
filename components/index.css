@@ -1,7 +1,7 @@
 .screen-resize {
   position: absolute;
-  right: 1px;
-  bottom: 1px;
+  right: 2px;
+  bottom: 2px;
   transform: rotate(-40deg);
   cursor: nwse-resize;
 }

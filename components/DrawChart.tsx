@@ -288,70 +288,80 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       if (!resizeHandle) return;
 
       let isResizing = false;
-      let startX: number, startY: number;
+      let startX = 0,
+        startY = 0;
+
+      const handleResizeStart = (clientX: number, clientY: number) => {
+        isResizing = true;
+        startX = clientX;
+        startY = clientY;
+      };
+
+      const handleResizeMove = (clientX: number, clientY: number) => {
+        if (!isResizing) return;
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+
+        setChartWidth((prev) => prev + deltaX);
+        setChartHeight((prev) => prev + deltaY);
+
+        startX = clientX;
+        startY = clientY;
+      };
+
+      const handleResizeEnd = () => {
+        isResizing = false;
+      };
 
       const onTouchStart = (e: TouchEvent) => {
         const touch = e.touches[0];
-        isResizing = true;
-        startX = touch.clientX;
-        startY = touch.clientY;
+        handleResizeStart(touch.clientX, touch.clientY);
         document.addEventListener("touchmove", onTouchMove);
         document.addEventListener("touchend", onTouchEnd);
       };
 
       const onTouchMove = (e: TouchEvent) => {
-        if (!isResizing) return;
         const touch = e.touches[0];
-        const deltaX = touch.clientX - startX;
-        const deltaY = touch.clientY - startY;
-
-        setChartWidth((prev) => prev + deltaX);
-        setChartHeight((prev) => prev + deltaY);
-
-        startX = touch.clientX;
-        startY = touch.clientY;
+        handleResizeMove(touch.clientX, touch.clientY);
       };
 
       const onTouchEnd = () => {
-        isResizing = false;
+        handleResizeEnd();
         document.removeEventListener("touchmove", onTouchMove);
         document.removeEventListener("touchend", onTouchEnd);
       };
 
       const onMouseDown = (e: MouseEvent) => {
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        handleResizeStart(e.clientX, e.clientY);
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
       };
 
       const onMouseMove = (e: MouseEvent) => {
-        if (!isResizing) return;
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        setChartWidth((prev) => prev + deltaX);
-        setChartHeight((prev) => prev + deltaY);
-
-        startX = e.clientX;
-        startY = e.clientY;
+        handleResizeMove(e.clientX, e.clientY);
       };
 
       const onMouseUp = () => {
-        isResizing = false;
+        handleResizeEnd();
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
       };
 
       if (screenWidth < 500) {
-        resizeHandle.addEventListener("touchstart", onTouchStart);
+        resizeHandle.addEventListener(
+          "touchstart",
+          onTouchStart as EventListener
+        );
       } else {
         resizeHandle.addEventListener("mousedown", onMouseDown);
       }
+
       return () => {
+        resizeHandle.removeEventListener(
+          "touchstart",
+          onTouchStart as EventListener
+        );
         resizeHandle.removeEventListener("mousedown", onMouseDown);
-        resizeHandle.removeEventListener("touchstart", onTouchStart);
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
         document.removeEventListener("touchmove", onTouchMove);
@@ -447,7 +457,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           </div>
         </div>
         <div
-          className="flex"
+          className="flex border border-gray-600"
           style={{
             position: "relative",
             width: `${chartWidth}px`,
@@ -460,7 +470,6 @@ const DrawChart: React.FC<DrawChartProps> = memo(
               width: "100%",
               height: "100%",
             }}
-            className="border border-gray-600"
           ></div>
           <Expand
             style={{
