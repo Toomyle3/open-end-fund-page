@@ -133,13 +133,13 @@ const BudgetPlanning = () => {
             label={{ value: "Year", position: "insideBottom", offset: -5 }}
           />
           <YAxis
-            label={{ value: "Millions VND", angle: -90, position: "insideLeft" }}
+            label={{ value: "Million VND", angle: -90, position: "insideLeft" }}
           />
           <ChartTooltip content={<ChartTooltipContent nameKey="endValue" />} />
           <Bar
             dataKey="endValue"
             fill="#4B5563"
-            name="Millions VND:&nbsp;"
+            name="Million VND:&nbsp;"
             label="year"
             radius={4}
           />
@@ -407,8 +407,8 @@ const BudgetPlanning = () => {
             <CardDescription className="text-[16px] font-serif">
               Great! After {results[results.length - 1].year} years of
               disciplined and regular monthly investment, you will have an
-              amount of {results[results.length - 1].endValue.toFixed(4)}{" "}
-              billion VND.
+              amount of {results[results.length - 1].endValue.toFixed(2)}{" "}
+              million VND.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col md:flex-row gap-8">
@@ -420,7 +420,7 @@ const BudgetPlanning = () => {
             </div>
             <div className="w-full lg:w-1/2">
               <h3 className="text-[16px] font-[600] mb-4">
-                INVESTMENT DETAILS (Millions VND)
+                INVESTMENT DETAILS (Million VND)
               </h3>
               <SummaryTable data={results} />
             </div>
