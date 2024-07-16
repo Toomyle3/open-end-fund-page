@@ -205,7 +205,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             const tooltipValue = isNavSelected
               ? `${value.value.toFixed(2)} VND`
               : `${value.value.toFixed(2)} %`;
-            const cargValue = 1 + value.value / 100;
+            const cargValue = 1 + value.value / 100 ?? 0;
             tooltipContent += `<div style="color:${color}; display:flex; 
             justify-content:space-between; align-items: flex-start;">
               <div style="text-align:left; width: 130%;">${seriesApi.options().title}:</div>
