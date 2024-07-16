@@ -133,7 +133,7 @@ const BudgetPlanning = () => {
             label={{ value: "Year", position: "insideBottom", offset: -5 }}
           />
           <YAxis
-            label={{ value: "Millions", angle: -90, position: "insideLeft" }}
+            label={{ value: "Millions VND", angle: -90, position: "insideLeft" }}
           />
           <ChartTooltip content={<ChartTooltipContent nameKey="endValue" />} />
           <Bar
@@ -169,7 +169,7 @@ const BudgetPlanning = () => {
                 <TableCell>{item.year}</TableCell>
                 <TableCell>{item.value.toFixed(1)}</TableCell>
                 <TableCell>{item.investment.toFixed(1)}</TableCell>
-                <TableCell>{item.interest.toFixed(1)}</TableCell>
+                <TableCell>{item.interest.toFixed(1) + "%"}</TableCell>
                 <TableCell>{item.endValue.toFixed(1)}</TableCell>
               </TableRow>
             ))}
@@ -415,7 +415,7 @@ const BudgetPlanning = () => {
             </div>
             <div className="w-full lg:w-1/2">
               <h3 className="text-[16px] font-[600] mb-4">
-                INVESTMENT DETAILS
+                INVESTMENT DETAILS (Millions VND)
               </h3>
               <SummaryTable data={results} />
             </div>
