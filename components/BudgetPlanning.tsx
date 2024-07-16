@@ -133,7 +133,11 @@ const BudgetPlanning = () => {
             label={{ value: "Year", position: "insideBottom", offset: -5 }}
           />
           <YAxis
-            label={{ value: "Million VND", angle: -90, position: "insideBottom" }}
+            label={{
+              value: "Million VND",
+              angle: -90,
+              position: "insideBottom",
+            }}
           />
           <ChartTooltip content={<ChartTooltipContent nameKey="endValue" />} />
           <Bar
@@ -401,37 +405,39 @@ const BudgetPlanning = () => {
           <Card>Nothing</Card>
         </TabsContent>
       </Tabs>
-      {results && (
-        <Card className="mt-8 p-[10px]">
-          <CardHeader className="mb-6">
-            <CardDescription className="text-[16px] font-serif">
-              Great! After {results[results.length - 1].year} years of
-              disciplined and regular monthly investment, you will have an
-              amount of {results[results.length - 1].endValue.toFixed(2)}{" "}
-              million VND which is ~{" "}
-              {(
-                (results[results.length - 1].endValue * 100) /
-                parseInt(form.watch("initialValue"))
-              ).toFixed(0)}
-              % .
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col md:flex-row gap-8 p-[20px]">
-            <div className="w-full lg:w-1/2 sm:min-w-[500px]">
-              <h3 className="text-[16px] font-[600] mb-4">
-                ASSET VALUE OVER TIME
-              </h3>
-              <BudgetChart data={results} />
-            </div>
-            <div className="w-full lg:w-1/2">
-              <h3 className="text-[16px] font-[600] mb-4">
-                INVESTMENT DETAILS (Million VND)
-              </h3>
-              <SummaryTable data={results} />
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <div className="w-full">
+        {results && (
+          <Card className="mt-8">
+            <CardHeader className="mb-6">
+              <CardDescription className="text-[16px] font-serif">
+                Great! After {results[results.length - 1].year} years of
+                disciplined and regular monthly investment, you will have an
+                amount of {results[results.length - 1].endValue.toFixed(2)}{" "}
+                million VND which is ~{" "}
+                {(
+                  (results[results.length - 1].endValue * 100) /
+                  parseInt(form.watch("initialValue"))
+                ).toFixed(0)}
+                % .
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-8">
+              <div className="w-full lg:w-1/2 sm:min-w-[500px]">
+                <h3 className="text-[16px] font-[600] mb-4">
+                  ASSET VALUE OVER TIME
+                </h3>
+                <BudgetChart data={results} />
+              </div>
+              <div className="w-full lg:w-1/2">
+                <h3 className="text-[16px] font-[600] mb-4">
+                  INVESTMENT DETAILS (Million VND)
+                </h3>
+                <SummaryTable data={results} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
