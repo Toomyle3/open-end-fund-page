@@ -54,7 +54,7 @@ const BudgetPlanning = () => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
+    <div className="w-full max-w-[1000px] flex flex-col justify-center items-center">
       <h1
         className="text-[30px] w-full flex justify-center pt-[60px] 
         pb-[60px] text-gray-600 font-[600] 
@@ -242,54 +242,29 @@ const BudgetPlanning = () => {
               </Form>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button className="font-serif">
+              <Button className="font-serif mt-[30px]">
                 Calculate Total Accumulated Amount
               </Button>
             </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="drawdown">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you'll be logged out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="current">Current password</Label>
-                <Input id="current" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">New password</Label>
-                <Input id="new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
-            </CardFooter>
-          </Card>
+          <Card>Nothing</Card>
         </TabsContent>
       </Tabs>
-      {/* <div>
-        <h1
-          className="text-[30px] w-full pt-[60px] 
-        pb-[60px] text-gray-600 font-[600] 
-        font-serif"
-        >
-          Budget Planning Tool
-        </h1>
-        <div className="flex flex-col sm:flex-row w-full justify-between">
-          <div className="max-w-[300px] font-serif font-[500] text-[28px]">
-            Please fill in some basic information to calculate the accumulated
-            amount when investing!
-          </div>
-          <div>
-            
-          </div>
-        </div>
-      </div> */}
+      <Card className="w-full mt-2">
+        <CardHeader>
+          <h2 className="font-[700] text-[15px]">ASSET VALUE OVER TIME</h2>
+          <CardDescription className="font-serif">
+            Great! After 10 years of disciplined and regular monthly investment,
+            you will have an amount of 1.2202
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-between">
+          <CardContent>123</CardContent>
+          <CardContent>123</CardContent>
+        </CardContent>
+      </Card>
     </div>
   );
 };
