@@ -28,13 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { z } from "zod";
 import "./index.css";
 import {
@@ -133,7 +127,7 @@ const BudgetPlanning = () => {
     return (
       <ChartContainer config={chartConfig}>
         <BarChart data={data} accessibilityLayer>
-          <CartesianGrid />
+          <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="year"
             label={{ value: "Year", position: "insideBottom", offset: -5 }}
