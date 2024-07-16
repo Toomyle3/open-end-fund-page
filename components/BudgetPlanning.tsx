@@ -412,7 +412,7 @@ const BudgetPlanning = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col md:flex-row gap-8">
-            <div className="w-full lg:w-1/2 min-w-[500px]">
+            <div className="w-full lg:w-1/2 sm:min-w-[500px]">
               <h3 className="text-[16px] font-[600] mb-4">
                 ASSET VALUE OVER TIME
               </h3>
