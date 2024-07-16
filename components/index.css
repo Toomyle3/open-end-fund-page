@@ -34,10 +34,10 @@
   border: none;
   border-bottom: 1px solid #4b5563;
   border-radius: 0px;
-  max-width: 100%;
   display: flex;
   font-size: 18px;
   font-weight: 500;
+  min-width: 100px;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   &:placeholder {
     margin-top: 50px;
