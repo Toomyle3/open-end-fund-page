@@ -94,6 +94,7 @@ const BudgetPlanning = () => {
     const r = parseFloat(data.annualRate) / 100;
     const t = parseInt(data.investTime);
     const n = parseInt(data.compoundingFrequency);
+    let previousA = P;
 
     for (let i = 1; i <= t; i++) {
       const A =
@@ -102,27 +103,16 @@ const BudgetPlanning = () => {
 
       results.push({
         year: i,
-        value: A,
+        value: previousA,
         investment: pmt,
         interest: r * 100,
         endValue: A,
       });
+      previousA = A;
     }
 
     return results;
   }
-
-  // Example usage:
-  const data = {
-    initialValue: "1100",
-    annualRate: "10",
-    compoundingFrequency: "1",
-    investTime: "10",
-    payment: "0",
-  };
-
-  const investmentResults = calculateResults(data);
-  console.log(investmentResults);
 
   async function onSubmit(data: FormData) {
     try {
