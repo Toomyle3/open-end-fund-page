@@ -59,7 +59,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       () =>
         d3
           .scaleSequential(d3.interpolateRainbow)
-          .domain([0, selectedFunds.length]),
+          .domain([selectedFunds.length, 0]),
       [selectedFunds]
     );
 
@@ -192,17 +192,32 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         } else {
           const date = new Date(param.time * 1000);
           const dateStr = format(date, "MMM dd, yyyy");
-          let tooltipContent = `<div>${dateStr}</div><div style="display:flex; justify-content:space-between;"><div>Fund</div><div>Return</div></div>`;
+          let tooltipContent = `<div>${dateStr}</div>
+<div style="display:flex; flex-direction:column; align-items: flex-start;">
+  <div style="display:flex; justify-content:space-between; width: 100%;">
+    <div style="text-align:left; width: 130%;">Fund</div>
+    <div style="text-align:left; width: 100%;">Return</div>
+    ${isNavSelected ? "" : "<div style='text-align:left; width: 100%;'>CARG</div>"}
+  </div>
+</div>`;
           param.seriesData?.forEach((value: any, seriesApi: any) => {
             const color = seriesApi.options().color as string;
             const tooltipValue = isNavSelected
               ? `${value.value.toFixed(2)} VND`
               : `${value.value.toFixed(2)} %`;
-            tooltipContent += `<div style="color:${color}; display:flex; justify-content:space-between;"><div>${seriesApi.options().title}:</div><div>${tooltipValue}</div></div>`;
+            const cargValue = 1 + value.value / 100;
+            tooltipContent += `<div style="color:${color}; display:flex; 
+            justify-content:space-between; align-items: flex-start;">
+              <div style="text-align:left; width: 130%;">${seriesApi.options().title}:</div>
+              <div style="text-align:left; display:flex; justify-content:start; width: 100%;">${tooltipValue}</div>
+              ${isNavSelected ? "" : `<div style="text-align:left; width: 100%;">${cargValue.toFixed(2)}%</div>`}
+            </div>`;
           });
 
           toolTip.style.display = "block";
           toolTip.innerHTML = tooltipContent;
+          toolTip.style.backgroundColor = isDarkMode ? "white" : "black";
+          toolTip.style.color = isDarkMode ? "black" : "white";
           if (param.point.x >= chartWidth - 200) {
             toolTip.style.transform = "translate(-100%, -50%)";
             toolTip.style.left = `${param.point.x}px`;
@@ -457,7 +472,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
           </div>
         </div>
         <div
-          className="flex border border-gray-600"
+          className="flex "
           style={{
             position: "relative",
             width: `${chartWidth}px`,
@@ -466,6 +481,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         >
           <div
             ref={chartContainerRef}
+            className="border border-gray-600"
             style={{
               width: "100%",
               height: "100%",
