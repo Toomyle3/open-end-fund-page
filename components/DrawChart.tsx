@@ -1,14 +1,12 @@
 "use client";
 import { defaultFunds, funds_info, PERIODS } from "@/constants";
-import { cn } from "@/lib/utils";
-import { CaretSortIcon } from "@radix-ui/react-icons";
+import useResizable from "@/hooks/useChartResize";
+import useExportCsv from "@/hooks/useExportCsv";
+import { DrawChartProps, FundData } from "@/types";
 import * as d3 from "d3";
 import { format } from "date-fns";
-import FileSaver from "file-saver";
-import JSZip from "jszip";
 import { ColorType, createChart, IChartApi, Time } from "lightweight-charts";
-import { CalendarFold, Expand } from "lucide-react";
-import moment from "moment";
+import { Expand } from "lucide-react";
 import React, {
   memo,
   useCallback,
@@ -17,42 +15,23 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ChartController from "./drawChart/ChartController";
+import FundController from "./drawChart/FundController";
 import "./index.css";
 import { Button } from "./ui/button";
-import { Calendar } from "./ui/calendar";
-import { Checkbox } from "./ui/checkbox";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
-import { Label } from "./ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-
-interface FundData {
-  date: number;
-  [key: string]: number;
-}
-
-interface DrawChartProps {
-  chartData: FundData[];
-  initialHeight?: number;
-  screenWidth: number;
-}
 
 const DrawChart: React.FC<DrawChartProps> = memo(
-  ({ chartData, screenWidth, initialHeight = 600 }) => {
+  ({ chartData, screenWidth }) => {
     // States
     const [data, setData] = useState<FundData[]>([]);
+    const { resizeRef, chartWidth, chartHeight } = useResizable();
+    const { handleExportCSV } = useExportCsv();
+    const fundsByType: any = {};
     const [selectedPeriod, setSelectedPeriod] = useState(PERIODS[6]);
     const [selectedFunds, setSelectedFunds] = useState<string[]>(defaultFunds);
     const [isOpen, setIsOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isNavSelected, setIsNavSelected] = useState(false);
-    const [chartHeight, setChartHeight] = useState(initialHeight);
-    const [chartWidth, setChartWidth] = useState(
-      screenWidth < 1000 ? screenWidth - 40 : 800
-    );
     const [dateRange, setDateRange] = useState<{
       from: Date | undefined;
       to: Date | undefined;
@@ -64,13 +43,11 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     // Refs
     const chartRef = useRef<IChartApi | null>(null);
     const chartContainerRef = useRef<HTMLDivElement>(null);
-    const resizeRef = useRef<HTMLDivElement>(null);
-
     const colorScales = useMemo(
       () =>
         d3
           .scaleSequential(d3.interpolateRainbow)
-          .domain([0, selectedFunds.length]),
+          .domain([selectedFunds.length, 0]),
       [selectedFunds]
     );
 
@@ -108,6 +85,13 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       setSelectedPeriod(period);
       setDateRange({ from: undefined, to: undefined });
     };
+
+    funds_info.forEach((fund: any) => {
+      if (!fundsByType[fund.type]) {
+        fundsByType[fund.type] = [];
+      }
+      fundsByType[fund.type].push(fund);
+    });
 
     const handleDrawChart = useCallback(() => {
       if (!chartContainerRef.current) return;
@@ -203,17 +187,32 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         } else {
           const date = new Date(param.time * 1000);
           const dateStr = format(date, "MMM dd, yyyy");
-          let tooltipContent = `<div>${dateStr}</div><div style="display:flex; justify-content:space-between;"><div>Fund</div><div>Return</div></div>`;
+          let tooltipContent = `<div>${dateStr}</div>
+<div style="display:flex; flex-direction:column; align-items: flex-start;">
+  <div style="display:flex; justify-content:space-between; width: 100%;">
+    <div style="text-align:left; width: 130%;">Fund</div>
+    <div style="text-align:left; width: 100%;">Return</div>
+    ${isNavSelected ? "" : "<div style='text-align:left; width: 100%;'>CARG</div>"}
+  </div>
+</div>`;
           param.seriesData?.forEach((value: any, seriesApi: any) => {
             const color = seriesApi.options().color as string;
             const tooltipValue = isNavSelected
               ? `${value.value.toFixed(2)} VND`
               : `${value.value.toFixed(2)} %`;
-            tooltipContent += `<div style="color:${color}; display:flex; justify-content:space-between;"><div>${seriesApi.options().title}:</div><div>${tooltipValue}</div></div>`;
+            const cargValue = 1 + value.value / 100 ?? 0;
+            tooltipContent += `<div style="color:${color}; display:flex; 
+            justify-content:space-between; align-items: flex-start;">
+              <div style="text-align:left; width: 130%;">${seriesApi.options().title}:</div>
+              <div style="text-align:left; display:flex; justify-content:start; width: 100%;">${tooltipValue}</div>
+              ${isNavSelected ? "" : `<div style="text-align:left; width: 100%;">${cargValue.toFixed(2)}%</div>`}
+            </div>`;
           });
 
           toolTip.style.display = "block";
           toolTip.innerHTML = tooltipContent;
+          toolTip.style.backgroundColor = isDarkMode ? "white" : "black";
+          toolTip.style.color = isDarkMode ? "black" : "white";
           if (param.point.x >= chartWidth - 200) {
             toolTip.style.transform = "translate(-100%, -50%)";
             toolTip.style.left = `${param.point.x}px`;
@@ -237,41 +236,6 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       isNavSelected,
     ]);
 
-    const fundsByType: any = {};
-    funds_info.forEach((fund: any) => {
-      if (!fundsByType[fund.type]) {
-        fundsByType[fund.type] = [];
-      }
-      fundsByType[fund.type].push(fund);
-    });
-
-    const handleExportCSV = () => {
-      if (
-        !selectedFunds ||
-        selectedFunds.length === 0 ||
-        !filteredData ||
-        filteredData.length === 0
-      ) {
-        return;
-      }
-      const zip = new JSZip();
-      selectedFunds.forEach((fund) => {
-        const header = ["date", fund];
-        const rows = filteredData
-          .filter((row) => row[fund] !== undefined && row[fund] !== null)
-          .map((row) => [
-            moment(row.date * 1000).format("YYYY-MM-DD"),
-            row[fund],
-          ]);
-        const csvContent = [header, ...rows].map((e) => e.join(",")).join("\n");
-        zip.file(`${fund}.csv`, csvContent);
-      });
-
-      zip.generateAsync({ type: "blob" }).then((content) => {
-        FileSaver.saveAs(content, "funds_data.zip");
-      });
-    };
-
     // Use Effect
     useEffect(() => {
       if (data.length > 0) {
@@ -294,171 +258,21 @@ const DrawChart: React.FC<DrawChartProps> = memo(
       }
     }, [chartData]);
 
-    useEffect(() => {
-      const resizeHandle = resizeRef.current;
-      if (!resizeHandle) return;
-
-      let isResizing = false;
-      let startX: number, startY: number;
-
-      const onTouchStart = (e: TouchEvent) => {
-        const touch = e.touches[0];
-        isResizing = true;
-        startX = touch.clientX;
-        startY = touch.clientY;
-        document.addEventListener("touchmove", onTouchMove);
-        document.addEventListener("touchend", onTouchEnd);
-      };
-
-      const onTouchMove = (e: TouchEvent) => {
-        if (!isResizing) return;
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - startX;
-        const deltaY = touch.clientY - startY;
-
-        setChartWidth((prev) => prev + deltaX);
-        setChartHeight((prev) => prev + deltaY);
-
-        startX = touch.clientX;
-        startY = touch.clientY;
-      };
-
-      const onTouchEnd = () => {
-        isResizing = false;
-        document.removeEventListener("touchmove", onTouchMove);
-        document.removeEventListener("touchend", onTouchEnd);
-      };
-
-      const onMouseDown = (e: MouseEvent) => {
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
-      };
-
-      const onMouseMove = (e: MouseEvent) => {
-        if (!isResizing) return;
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        setChartWidth((prev) => prev + deltaX);
-        setChartHeight((prev) => prev + deltaY);
-
-        startX = e.clientX;
-        startY = e.clientY;
-      };
-
-      const onMouseUp = () => {
-        isResizing = false;
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-      };
-
-      if (screenWidth < 500) {
-        resizeHandle.addEventListener("touchstart", onTouchStart);
-      } else {
-        resizeHandle.addEventListener("mousedown", onMouseDown);
-      }
-      return () => {
-        resizeHandle.removeEventListener("mousedown", onMouseDown);
-        resizeHandle.removeEventListener("touchstart", onTouchStart);
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-        document.removeEventListener("touchmove", onTouchMove);
-        document.removeEventListener("touchend", onTouchEnd);
-      };
-    }, [resizeRef, screenWidth]);
-
     return (
       <div className="flex w-full flex-col justify-center items-center">
+        <ChartController
+          handlePeriodSelect={handlePeriodSelect}
+          selectedPeriod={selectedPeriod}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          setSelectedPeriod={setSelectedPeriod}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          setIsNavSelected={setIsNavSelected}
+          isNavSelected={isNavSelected}
+        />
         <div
-          className="flex w-full max-w-[800px] justify-start 
-        items-center pb-4 gap-4 
-        flex-col sm:flex-row"
-        >
-          <div className="flex gap-2">
-            {PERIODS.map((period) => (
-              <Button
-                key={period.label}
-                onClick={() => handlePeriodSelect(period)}
-                className={`text-[12px] text-gray-700 onHover flex 
-      justify-center items-center 
-      h-[40px] w-[40px] rounded ${
-        selectedPeriod === period && !dateRange?.from
-          ? "bg-blue-500 text-white"
-          : "bg-gray-200"
-      }`}
-              >
-                {period.label}
-              </Button>
-            ))}
-          </div>
-          <div className="h-[40px]">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="onHover">
-                  {dateRange?.from ? (
-                    dateRange?.to ? (
-                      <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <CalendarFold />
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={dateRange?.from}
-                  selected={{ from: dateRange?.from, to: dateRange?.to }}
-                  onSelect={(selected) => {
-                    setDateRange(selected as any);
-                    if (selected?.from && selected?.to) {
-                      setSelectedPeriod(PERIODS[6]);
-                    }
-                  }}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="flex">
-            <Button
-              id="chart-mode"
-              className="h-[40px] w-[100px] onHover text-sm"
-              style={{
-                background: isDarkMode ? "#111827" : "#ffffff",
-                color: isDarkMode ? "#ffffff" : "#111827",
-                border: isDarkMode ? "1px solid #ffffff" : "1px solid #111827",
-              }}
-              onClick={(value) => {
-                setIsDarkMode(!isDarkMode);
-              }}
-            >
-              {isDarkMode ? "Dark Mode" : "Light Mode"}
-            </Button>
-          </div>
-          <div className="flex">
-            <Button
-              id="chart-mode"
-              className="onHover h-[40px] min-w-[100px] text-[#111827] 
-              text-sm bg-[#ffffff] 
-              border border-[#111827]"
-              onClick={(value) => setIsNavSelected(!isNavSelected)}
-            >
-              {isNavSelected ? "Net asset value" : "% value"}
-            </Button>
-          </div>
-        </div>
-        <div
-          className="flex"
+          className="flex "
           style={{
             position: "relative",
             width: `${chartWidth}px`,
@@ -467,11 +281,11 @@ const DrawChart: React.FC<DrawChartProps> = memo(
         >
           <div
             ref={chartContainerRef}
+            className="border border-gray-600"
             style={{
               width: "100%",
               height: "100%",
             }}
-            className="border border-gray-600"
           ></div>
           <Expand
             style={{
@@ -483,82 +297,17 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             className="screen-resize"
           />
         </div>
-        <div className="pt-10 w-full flex max-w-[800px]">
-          <Collapsible
-            open={isOpen}
-            onOpenChange={setIsOpen}
-            className={cn("w-full bg-gray-600 text-white rounded", {
-              "h-[50px]": !isOpen,
-            })}
-          >
-            <CollapsibleTrigger asChild className="flex cursor-pointer">
-              <div className="flex items-center justify-between px-4 h-[50px]">
-                <h4 className="font-[500] font-serif pl-[20px]">
-                  Show All Funds
-                </h4>
-                <CaretSortIcon className="h-6 w-6" />
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent
-              style={{
-                padding: "0px 40px 40px 40px",
-              }}
-              className="collapsible-items w-full flex justify-center items-center gap-4"
-            >
-              <div
-                className="w-full
-                sm:flex sm:justify-around
-                 grid grid-cols-2 
-                gap-6 sm:grid-cols-4 
-                max-h-[500px] overflow-auto
-                pt-4"
-              >
-                {Object.keys(fundsByType).map((type) => (
-                  <div key={type} className="flex flex-col gap-2">
-                    <h2 className="flex font-serif justify-start text-lg font-[500] mb-4">
-                      {type}
-                    </h2>
-                    {fundsByType[type].map((fund: any) => (
-                      <div
-                        key={fund.name}
-                        className="font-serif flex items-center gap-4"
-                      >
-                        <Checkbox
-                          id={fund.name}
-                          className="bg-white"
-                          checked={selectedFunds.includes(fund.name)}
-                          onCheckedChange={(value) => {
-                            if (value) {
-                              setSelectedFunds((prev) => {
-                                return [...prev, fund.name];
-                              });
-                            } else {
-                              setSelectedFunds((prev) => {
-                                return prev.filter(
-                                  (value) => value !== fund.name
-                                );
-                              });
-                            }
-                          }}
-                        />
-                        <Label
-                          htmlFor={fund.name}
-                          className="text-sm font-medium leading-none"
-                        >
-                          {fund.name}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
+        <FundController
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          fundsByType={fundsByType}
+          selectedFunds={selectedFunds}
+          setSelectedFunds={setSelectedFunds}
+        />
         <div className="flex justify-center pt-10">
           <Button
             className="w-[200px] h-[40px] text-sm font-medium text-white bg-primary hover:bg-primary/90"
-            onClick={handleExportCSV}
+            onClick={() => handleExportCSV(selectedFunds, filteredData)}
           >
             Export CSV
           </Button>
