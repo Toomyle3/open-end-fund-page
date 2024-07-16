@@ -87,32 +87,42 @@ const BudgetPlanning = () => {
     },
   });
 
-  function calculateResults(data: FormData): ResultItem[] {
-    const years = parseInt(data.investTime);
-    const results: ResultItem[] = [];
-    let currentValue = parseFloat(data.initialValue);
-    const annualRate = parseFloat(data.annualRate) / 100;
-    const monthlyRate = annualRate / 12;
-    const monthlyPayment = parseFloat(data.payment);
+  function calculateResults(data: FormData) {
+    const results = [];
+    const pmt = parseInt(data.payment);
+    const P = parseFloat(data.initialValue);
+    const r = parseFloat(data.annualRate) / 100;
+    const t = parseInt(data.investTime);
+    const n = parseInt(data.compoundingFrequency);
 
-    for (let i = 0; i <= years * 12; i++) {
-      const interest = currentValue * monthlyRate;
-      const endValue = (currentValue + interest + monthlyPayment).toFixed(2);
+    for (let i = 1; i <= t; i++) {
+      const A =
+        P * Math.pow(1 + r / n, n * i) +
+        (pmt * (Math.pow(1 + r / n, n * i) - 1)) / (r / n);
 
-      if (i % 12 === 0) {
-        results.push({
-          year: i / 12,
-          value: currentValue,
-          investment: monthlyPayment * 12,
-          interest: Number(interest * 12),
-          endValue: Number(endValue),
-        });
-      }
-
-      currentValue = Number(endValue);
+      results.push({
+        year: i,
+        value: A,
+        investment: pmt,
+        interest: r * 100,
+        endValue: A,
+      });
     }
+
     return results;
   }
+
+  // Example usage:
+  const data = {
+    initialValue: "1100",
+    annualRate: "10",
+    compoundingFrequency: "1",
+    investTime: "10",
+    payment: "0",
+  };
+
+  const investmentResults = calculateResults(data);
+  console.log(investmentResults);
 
   async function onSubmit(data: FormData) {
     try {
@@ -402,7 +412,7 @@ const BudgetPlanning = () => {
         </TabsContent>
       </Tabs>
       {results && (
-        <Card className="mt-8">
+        <Card className="mt-8 p-[10px]">
           <CardHeader className="mb-6">
             <CardDescription className="text-[16px] font-serif">
               Great! After {results[results.length - 1].year} years of
@@ -411,7 +421,7 @@ const BudgetPlanning = () => {
               million VND.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col md:flex-row gap-8">
+          <CardContent className="flex flex-col md:flex-row gap-8 p-[20px]">
             <div className="w-full lg:w-1/2 sm:min-w-[500px]">
               <h3 className="text-[16px] font-[600] mb-4">
                 ASSET VALUE OVER TIME
