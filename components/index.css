@@ -49,3 +49,8 @@
   --tw-ring-shadow: none;
   box-shadow: none;
 }
+
+.overflow-custom::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}

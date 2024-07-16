@@ -55,7 +55,7 @@ const FundController = ({
           className="collapsible-items w-full flex justify-center items-center gap-4"
         >
           <div
-            className="w-full
+            className="overflow-custom w-full
           sm:flex sm:justify-around
            grid grid-cols-2 
           gap-6 sm:grid-cols-4 
