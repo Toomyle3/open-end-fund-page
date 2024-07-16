@@ -139,7 +139,7 @@ const BudgetPlanning = () => {
           <Bar
             dataKey="endValue"
             fill="#4B5563"
-            name="Millions VND: "
+            name="Millions VND:&nbsp;"
             label="year"
             radius={4}
           />
@@ -406,8 +406,8 @@ const BudgetPlanning = () => {
               billion VND.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col lg:flex-row gap-8">
-            <div className="w-full lg:w-1/2">
+          <CardContent className="flex flex-col md:flex-row gap-8">
+            <div className="w-full lg:w-1/2 min-w-[500px]">
               <h3 className="text-[16px] font-[600] mb-4">
                 ASSET VALUE OVER TIME
               </h3>
