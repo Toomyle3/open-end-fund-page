@@ -421,14 +421,14 @@ const BudgetPlanning = () => {
                 % .
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col md:flex-row gap-8">
-              <div className="w-full lg:w-1/2 sm:min-w-[500px]">
+            <CardContent className="flex flex-col lg:flex-row gap-8">
+              <div className="w-full">
                 <h3 className="text-[16px] font-[600] mb-4">
                   ASSET VALUE OVER TIME
                 </h3>
                 <BudgetChart data={results} />
               </div>
-              <div className="w-full lg:w-1/2">
+              <div className="w-full">
                 <h3 className="text-[16px] font-[600] mb-4">
                   INVESTMENT DETAILS (Million VND)
                 </h3>

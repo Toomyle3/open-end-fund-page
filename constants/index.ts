@@ -8,7 +8,7 @@ export const sidebarLinks = [
   {
     imgURL: "/icons/data_view.svg",
     route: "/data-view",
-    label: "Date View",
+    label: "Fund Details",
   },
   {
     imgURL: "/icons/calculator.svg",

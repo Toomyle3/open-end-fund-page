@@ -221,7 +221,7 @@ const DataTable: React.FC = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[1000px]">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter all columns..."

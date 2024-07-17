@@ -2,7 +2,7 @@ import DataTable from "@/components/DataTable";
 
 const page = () => {
   return (
-    <div>
+    <div className="flex w-full justify-center">
       <DataTable />
     </div>
   );
