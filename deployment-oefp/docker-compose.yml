@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    privileged: true
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+    
+  redis:
+    image: redis:5.0.14
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - 16379:6379
+    command: redis-server --appendonly yes
+    networks:
+      - backend
+
+  flyway:
+    build:
+      context: services/flyway
+    environment:
+      - FLYWAY_URL=jdbc:postgresql://${POSTGRES_HOST}:5432/${POSTGRES_DB}
+      - FLYWAY_USER=${POSTGRES_USER}
+      - FLYWAY_PASSWORD=${POSTGRES_PASSWORD}
+      - FLYWAY_PLACEHOLDER_PREFIX=@
+    volumes:
+      - "./data/flyway/sql:/flyway/sql"
+      - "./services/flyway/databases:/opt/migrations"
+      - "./services/flyway/scripts:/opt/scripts"
+    command: /opt/scripts/migrate.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend:
+    driver: bridge
