@@ -14,11 +14,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
+import { useTranslations } from "next-intl";
 
 const SideBar = () => {
   const pathname = usePathname();
   const { signOut } = useClerk();
   const router = useRouter();
+  const t = useTranslations("SideBar");
 
   return (
     <section className="m-w-[300px]">
@@ -49,7 +51,7 @@ const SideBar = () => {
               className="rounded-[50%]"
             />
             <h3 className="text-20 font-extrabold text-white ml-2">
-              TC Funds Watcher
+              {t("title")}
             </h3>
           </Link>
           <div className="flex flex-col justify-between gap-[40px]">
