@@ -357,7 +357,7 @@ const BudgetPlanning = () => {
                        whitespace-nowrap
                     font-[500] ${?'font-serif' : 'font-mono'}"
                         >
-                          {t(" Years")}
+                          {t("Years")}
                         </div>
                         <FormMessage className="text-white-1" />
                       </FormItem>

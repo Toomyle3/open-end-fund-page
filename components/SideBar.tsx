@@ -59,7 +59,8 @@ const SideBar = () => {
               <nav className="nav-scroll flex flex-col h-[500px] overflow-auto gap-6 text-white">
                 {sidebarLinks.map(({ route, label, imgURL }) => {
                   const isActive =
-                    pathname === route || pathname.startsWith(`${route}/`);
+                    "/" + pathname.split("/")[2] === route ||
+                    pathname.startsWith(`${route}/`);
                   return (
                     <SheetClose asChild key={route}>
                       <Link
