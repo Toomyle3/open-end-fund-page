@@ -77,7 +77,7 @@ const SideBar = () => {
                           width={20}
                           height={20}
                         />
-                        <p className="text-sm">{label}</p>
+                        <p className="text-sm">{t(label)}</p>
                       </Link>
                     </SheetClose>
                   );
@@ -93,7 +93,7 @@ const SideBar = () => {
                   font-extrabold logout-btn"
                   onClick={() => signOut(() => router.push("/sign-in"))}
                 >
-                  Log Out
+                  {t("logout")}
                 </Button>
               </div>
             </SignedIn>
