@@ -1,3 +1,4 @@
+import Language from "@/components/Language";
 import SideBar from "@/components/SideBar";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,7 +27,7 @@ export default function RootLayout({
                   className="rounded-[50%]"
                 />
               </Link>
-              <div></div>
+              <Language />
             </div>
             {children}
           </div>
