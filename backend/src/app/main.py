@@ -1,8 +1,17 @@
 import os
-from typing import Callable, List
-from concurrent.futures import ThreadPoolExecutor
+import sys
+import json
+import redis
+import datetime
+
+from typing import *
 from vnstock3 import Vnstock
-import backend.src.app.dataservice.db as db
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from app.dataservice import db
+from app.fmarket import client
+from app.fmarket import model
 
 # Set the environment variable
 if "ACCEPT_TC" not in os.environ:
@@ -11,6 +20,7 @@ if "ACCEPT_TC" not in os.environ:
 # In-memory cache
 stock_data_cache = {}
 
+TTL_24h = 86400  # 24 hours
 
 def crawl(symbol: str):
     """Crawl stock data and save it to PostgreSQL."""
@@ -23,10 +33,38 @@ def crawl(symbol: str):
 
     db.save_to_db(df, symbol)
 
-def main(symbols: List[str]):
-    with ThreadPoolExecutor() as executor:
-        executor.map(crawl, symbols)
+# Function to generate Redis key
+def generate_redis_key(fund_id, data_type):
+    return f"fund:{fund_id}:{data_type}"
+
+def main():
+    # Define the Redis client
+    redis_client = redis.Redis(host='redis', port=16379, db=0)
+
+    funds = client.get_fund_data()
+    
+    # Save the funds data to Redis
+    funds_key = "funds:data"
+    funds_dicts = [fund.to_dict() for fund in funds]
+    funds_value = json.dumps(funds_dicts, indent=4)
+    redis_client.set(funds_key, funds_value)
+    redis_client.expire(funds_key, TTL_24h)
+
+    for fund in funds:
+        nav_history_list = client.get_nav_history(fund.id)
+        
+        # Generate Redis key
+        nav_history_key = generate_redis_key(fund.id, "nav_history")
+        
+        # Convert list of NavHistory objects to list of dictionaries
+        nav_history_dicts = [nav.to_dict() for nav in nav_history_list]
+        
+        # Save each response of each API request to Redis with a proper key
+        redis_value = json.dumps(nav_history_dicts, indent=4)
+        redis_client.set(nav_history_key, redis_value)
+        redis_client.expire(nav_history_key, TTL_24h)
+        
+        print(f"Saved NAV history for fund {fund.shortName} with key {nav_history_key}")
 
 if __name__ == "__main__":
-    symbols_to_crawl = ["FUESSV30", "VN30", "VN100"]
-    main(symbols_to_crawl)
+    main()

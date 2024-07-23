@@ -36,3 +36,4 @@ yarn-error.log*
 next-env.d.ts
 deployment-oefp/data
 deployment-oefp/.env
+*.pyc
