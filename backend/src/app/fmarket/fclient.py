@@ -3,9 +3,9 @@ import json
 import datetime
 from typing import *
 
-from app.fmarket import model
+from backend.src.app.fmarket import fmodel
 
-def get_fund_data() -> List[model.Fund]:
+def get_fund_data() -> List[fmodel.Fund]:
     url = "https://api.fmarket.vn/res/products/filter"
     payload = json.dumps({
       "types": [
@@ -46,14 +46,14 @@ def get_fund_data() -> List[model.Fund]:
         fund_data_rows = response_data.get("data", {}).get("rows", [])
         res = []
         for fund_data in fund_data_rows:
-            fund = model.Fund(fund_data)
+            fund = fmodel.Fund(fund_data)
             res.append(fund)
         return res
     else:
         print(f"Error: {response.status_code}")
         return []
 
-def get_nav_history(productId: int) -> List[model.NavHistory]:
+def get_nav_history(productId: int) -> List[fmodel.NavHistory]:
     url = "https://api.fmarket.vn/res/product/get-nav-history"
     payload = json.dumps({
     "isAllData": 1,
@@ -85,7 +85,7 @@ def get_nav_history(productId: int) -> List[model.NavHistory]:
     if response.status_code == 200:
         response_data = response.json()
         nav_history_data = response_data.get("data", [])
-        nav_history_list = [model.NavHistory(nav) for nav in nav_history_data]
+        nav_history_list = [fmodel.NavHistory(nav) for nav in nav_history_data]
         return nav_history_list
     else:
         print(f"Error: {response.status_code}")

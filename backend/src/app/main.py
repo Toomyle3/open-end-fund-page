@@ -7,11 +7,10 @@ import datetime
 from typing import *
 from vnstock3 import Vnstock
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
-from app.dataservice import db
-from app.fmarket import client
-from app.fmarket import model
+from backend.src.app.dataservice import db
+from backend.src.app.fmarket import fclient
 
 # Set the environment variable
 if "ACCEPT_TC" not in os.environ:
@@ -41,7 +40,7 @@ def main():
     # Define the Redis client
     redis_client = redis.Redis(host='redis', port=16379, db=0)
 
-    funds = client.get_fund_data()
+    funds = fclient.get_fund_data()
     
     # Save the funds data to Redis
     funds_key = "funds:data"
@@ -51,7 +50,7 @@ def main():
     redis_client.expire(funds_key, TTL_24h)
 
     for fund in funds:
-        nav_history_list = client.get_nav_history(fund.id)
+        nav_history_list = fclient.get_nav_history(fund.id)
         
         # Generate Redis key
         nav_history_key = generate_redis_key(fund.id, "nav_history")
