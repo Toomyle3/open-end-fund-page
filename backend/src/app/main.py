@@ -5,7 +5,7 @@ import time
 from threading import Thread
 from api import create_app
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+
 
 from backend.src.app.dataservice import db
 from backend.src.app.fmarket import fclient

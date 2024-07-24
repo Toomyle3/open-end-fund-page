@@ -10,8 +10,8 @@ def create_app():
     # Initialize Redis client and store in app config
     app.config['REDIS_CLIENT'] = create_redis_client()
 
-    from api.fund import fund_api
-    from api.user import user_api
+    from backend.src.app.api.fund import fund_api
+    from backend.src.app.api.user import user_api
     # Import other blueprints as needed
 
     app.register_blueprint(fund_api)
