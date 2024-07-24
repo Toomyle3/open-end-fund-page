@@ -1,14 +1,13 @@
 import json
 from flask import Blueprint, jsonify, request, current_app
-import redis
 
 fund_api = Blueprint('fund_api', __name__)
-redis_client = current_app.config['REDIS_CLIENT']
 
 TTL_24h = 86400  # 24 hours
 
 @fund_api.route('/api/funds', methods=['GET'])
 def get_funds():
+    redis_client = current_app.config['REDIS_CLIENT']
     funds_key = "funds:data"
     funds_data = redis_client.get(funds_key)
     
@@ -20,6 +19,7 @@ def get_funds():
 
 @fund_api.route('/api/fund/<int:fund_id>/nav', methods=['GET'])
 def get_fund_nav(fund_id):
+    redis_client = current_app.config['REDIS_CLIENT']
     nav_history_key = generate_redis_key(fund_id, "nav_history")
     nav_history_data = redis_client.get(nav_history_key)
     
