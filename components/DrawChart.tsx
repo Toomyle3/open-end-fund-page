@@ -19,7 +19,6 @@ import ChartController from "./drawChart/ChartController";
 import FundController from "./drawChart/FundController";
 import "./index.css";
 import { Button } from "./ui/button";
-import { useTranslations } from "next-intl";
 
 const DrawChart: React.FC<DrawChartProps> = memo(
   ({ chartData, screenWidth }) => {
@@ -27,7 +26,6 @@ const DrawChart: React.FC<DrawChartProps> = memo(
     const [data, setData] = useState<FundData[]>([]);
     const { resizeRef, chartWidth, chartHeight } = useResizable();
     const { handleExportCSV } = useExportCsv();
-    const t = useTranslations("DrawChart");
     const fundsByType: any = {};
     const [selectedPeriod, setSelectedPeriod] = useState(PERIODS[6]);
     const [selectedFunds, setSelectedFunds] = useState<string[]>(defaultFunds);
@@ -311,7 +309,7 @@ const DrawChart: React.FC<DrawChartProps> = memo(
             className="w-[200px] h-[40px] text-sm font-medium text-white bg-primary hover:bg-primary/90"
             onClick={() => handleExportCSV(selectedFunds, filteredData)}
           >
-            {t("Export CSV")}
+            Export CSV
           </Button>
         </div>
       </div>
