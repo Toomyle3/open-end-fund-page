@@ -1,19 +1,9 @@
-import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import ConvexClerkProvider from "./provider/ConvexClerkProvider";
+import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Open-end fund app",
-  description: "Performance dashboard of open-ended funds in Vietnam",
-  icons: {
-    icon: "/icons/logo.jpg",
-  },
-};
 
 export default async function RootLayout({
   children,
@@ -24,7 +14,6 @@ export default async function RootLayout({
 }>) {
   const messages = await getMessages();
   return (
-    <ConvexClerkProvider>
       <html lang={locale}>
         <body className={inter.className}>
           <NextIntlClientProvider messages={messages} locale={locale}>
@@ -32,6 +21,5 @@ export default async function RootLayout({
           </NextIntlClientProvider>
         </body>
       </html>
-    </ConvexClerkProvider>
   );
 }
