@@ -1,11 +1,20 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import createMiddleware from "next-intl/middleware";
+import { notFound } from 'next/navigation'; // Import the notFound function
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)"]);
+const intlMiddleware = createMiddleware({
+  locales: ["en", "vi"],
+  defaultLocale: "en",
+});
 
 export default clerkMiddleware((auth, req) => {
-  if (!isPublicRoute(req)) auth().protect();
+  const isPublicRoute = req.nextUrl.pathname.startsWith("/sign-in");
+  if (!isPublicRoute) {
+    auth().protect();
+    return intlMiddleware(req);
+  }
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };

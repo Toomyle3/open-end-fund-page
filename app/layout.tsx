@@ -13,15 +13,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params: { locale },
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
   return (
     <ConvexClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
+      <html>
+        <body className={inter.className}>
+            {children}
+        </body>
       </html>
     </ConvexClerkProvider>
   );

@@ -1,0 +1,56 @@
+{
+  "Home": {
+    "title": "Performance dashboard of open-ended funds in Vietnam",
+    "loading": "Loading..."
+  },
+  "DrawChart": {
+    "Export CSV": "Export CSV"
+  },
+  "ChartController": {
+    "Dark Mode": "Dark Mode",
+    "Light Mode": "Light Mode",
+    "Net asset value": "Net asset value",
+    "% value": "% value",
+    "Show All Funds": "Show All Funds",
+    "Index": "Index",
+    "Equity Fund": "Equity Fund",
+    "Bond": "Bond",
+    "ETF": "ETF"
+  },
+  "SideBar": {
+    "title": "TC Funds Watcher",
+    "logout": "Log Out",
+    "Home": "Home",
+    "Fund Details": "Fund Details",
+    "Budget Planning Tool": "Budget Planning Tool"
+  },
+  "BudgetPlanning": {
+    "Budget Planning Tool": "Budget Planning Tool",
+    "Future Value Formula": "Future Value Formula",
+    "Max Draw-Down Formula": "Max DrawDown Formula",
+    "Future value of an investment": "Future value of an investment",
+    "description": "The formula is the Future Value of an investment compounded periodically and includes periodic contributions",
+    "Initial Investment:": "Initial Investment:",
+    "mil VND": "mil VND",
+    "Annual Interest Rate:": "Annual Interest Rate:",
+    "Compounding Frequency:": "Compounding Frequency:",
+    "Investing Time:": "Investing Time:",
+    "Years": "Years",
+    "Payment Amount:": "Payment Amount:",
+    "mil VND/month": "mil VND/month",
+    "Calculate Total Accumulated Amount": " Calculate Total Accumulated Amount",
+    "Great! After": "Great! After",
+    "quote": "years of disciplined and regular monthly investment, you will have an amount of",
+    "ASSET VALUE OVER TIME": "ASSET VALUE OVER TIME",
+    "INVESTMENT DETAILS (Million VND)": "INVESTMENT DETAILS (Million VND)",
+    "Year": "Year",
+    "Start Value": "Start Value",
+    "Nothing":"Nothing",
+    "Investment": "Investment",
+    "Interest": "Interest",
+    "End Value": "End Value",
+    "See More": "See More",
+    "Million VND": "Million VND",
+    "million VND which is": "million VND which is"
+  }
+}
