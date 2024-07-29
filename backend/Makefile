@@ -1,2 +1,0 @@
-test-backend:
-	pytest ./test
