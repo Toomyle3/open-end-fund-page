@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-import createNextIntlPlugin from "next-intl/plugin";
-const withNextIntl = createNextIntlPlugin();
-
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -14,6 +11,20 @@ const nextConfig = {
       },
     ],
   },
+  i18n: {
+    locales: ["en-US", "vi-VN"],
+    defaultLocale: "en-US",
+    domains: [
+      {
+        domain: "example.com",
+        defaultLocale: "en-US",
+      },
+      {
+        domain: "example.vi",
+        defaultLocale: "vi-VN",
+      },
+    ],
+  },
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;
