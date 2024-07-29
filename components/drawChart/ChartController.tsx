@@ -6,7 +6,6 @@ import "../index.css";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useTranslations } from "next-intl";
 
 interface ChartController {
   handlePeriodSelect: (period: (typeof PERIODS)[number]) => void;
@@ -34,7 +33,6 @@ const ChartController = ({
   setIsNavSelected,
   isNavSelected,
 }: ChartController) => {
-  const t = useTranslations("ChartController");
   return (
     <div
       className="flex w-full max-w-[800px] justify-start 
@@ -96,7 +94,7 @@ const ChartController = ({
       <div className="flex">
         <Button
           id="chart-mode"
-          className="h-[40px] w-[120px] onHover text-sm"
+          className="h-[40px] w-[100px] onHover text-sm"
           style={{
             background: isDarkMode ? "#111827" : "#ffffff",
             color: isDarkMode ? "#ffffff" : "#111827",
@@ -106,7 +104,7 @@ const ChartController = ({
             setIsDarkMode(!isDarkMode);
           }}
         >
-          {isDarkMode ? t("Dark Mode") : t("Light Mode")}
+          {isDarkMode ? "Dark Mode" : "Light Mode"}
         </Button>
       </div>
       <div className="flex">
@@ -117,7 +115,7 @@ const ChartController = ({
               border border-[#111827]"
           onClick={(value) => setIsNavSelected(!isNavSelected)}
         >
-          {isNavSelected ? t("Net asset value") : t("% value")}
+          {isNavSelected ? "Net asset value" : "% value"}
         </Button>
       </div>
     </div>

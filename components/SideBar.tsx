@@ -14,13 +14,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
-import { useTranslations } from "next-intl";
 
 const SideBar = () => {
   const pathname = usePathname();
   const { signOut } = useClerk();
   const router = useRouter();
-  const t = useTranslations("SideBar");
 
   return (
     <section className="m-w-[300px]">
@@ -51,7 +49,7 @@ const SideBar = () => {
               className="rounded-[50%]"
             />
             <h3 className="text-20 font-extrabold text-white ml-2">
-              {t("title")}
+              TC Funds Watcher
             </h3>
           </Link>
           <div className="flex flex-col justify-between gap-[40px]">
@@ -59,8 +57,7 @@ const SideBar = () => {
               <nav className="nav-scroll flex flex-col h-[500px] overflow-auto gap-6 text-white">
                 {sidebarLinks.map(({ route, label, imgURL }) => {
                   const isActive =
-                    "/" + pathname.split("/")[2] === route ||
-                    pathname.startsWith(`${route}/`);
+                    pathname === route || pathname.startsWith(`${route}/`);
                   return (
                     <SheetClose asChild key={route}>
                       <Link
@@ -78,7 +75,7 @@ const SideBar = () => {
                           width={20}
                           height={20}
                         />
-                        <p className="text-sm">{t(label)}</p>
+                        <p className="text-sm">{label}</p>
                       </Link>
                     </SheetClose>
                   );
@@ -94,7 +91,7 @@ const SideBar = () => {
                   font-extrabold logout-btn"
                   onClick={() => signOut(() => router.push("/sign-in"))}
                 >
-                  {t("logout")}
+                  Log Out
                 </Button>
               </div>
             </SignedIn>

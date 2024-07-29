@@ -39,8 +39,6 @@ import {
 } from "./ui/chart";
 
 import { Input } from "./ui/input";
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 interface FormData {
   initialValue: string;
   annualRate: string;
@@ -88,9 +86,7 @@ const BudgetPlanning = () => {
       payment: "0",
     },
   });
-  const t = useTranslations("BudgetPlanning");
-  const pathname = usePathname();
-  const currentLocale = pathname.split("/")[1];
+
   function calculateResults(data: FormData) {
     const results = [];
     const pmt = parseInt(data.payment);
@@ -134,11 +130,11 @@ const BudgetPlanning = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="year"
-            label={{ value: t("Year"), position: "insideBottom", offset: -5 }}
+            label={{ value: "Year", position: "insideBottom", offset: -5 }}
           />
           <YAxis
             label={{
-              value: t("Million VND"),
+              value: "Million VND",
               angle: -90,
               position: "insideBottom",
             }}
@@ -147,7 +143,7 @@ const BudgetPlanning = () => {
           <Bar
             dataKey="endValue"
             fill="#4B5563"
-            name={`${t("Million VND")}:`}
+            name="Million VND:&nbsp;"
             label="year"
             radius={4}
           />
@@ -164,11 +160,11 @@ const BudgetPlanning = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("Year")}</TableHead>
-              <TableHead>{t("Start Value")}</TableHead>
-              <TableHead>{t("Investment")}</TableHead>
-              <TableHead>{t("Interest")}</TableHead>
-              <TableHead>{t("End Value")}</TableHead>
+              <TableHead>Year</TableHead>
+              <TableHead>Start Value</TableHead>
+              <TableHead>Investment</TableHead>
+              <TableHead>Interest</TableHead>
+              <TableHead>End Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -190,10 +186,9 @@ const BudgetPlanning = () => {
               borderBottom: "1px solid text-gray-600",
               textDecoration: "underline",
             }}
-            className={`hover:text-red-800 mt-4 text-gray-600 ${currentLocale !== "vi" ? "font-serif" : "font-mono"} 
-            text-[15px] font-[600]`}
+            className="hover:text-red-800 mt-4 text-gray-600 font-serif text-[15px] font-[600]"
           >
-            {t("See More")}
+            See More
           </button>
         )}
       </div>
@@ -202,34 +197,31 @@ const BudgetPlanning = () => {
 
   return (
     <div className="w-full max-w-[1000px] flex flex-col justify-center items-center">
-      <h1
-        className={`text-[30px] w-full flex justify-center pt-[60px] pb-[60px] text-gray-600 font-[600] ${currentLocale !== "vi" ? "font-mono" : "${?'font-serif' : 'font-mono'}"}`}
-      >
-        {t("Budget Planning Tool")}
+      <h1 className="text-[30px] w-full flex justify-center pt-[60px] pb-[60px] text-gray-600 font-[600] font-serif">
+        Budget Planning Tool
       </h1>
       <Tabs defaultValue="future" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="future" className="font-black">
-            {t("Future Value Formula")}
+            Future Value Formula
           </TabsTrigger>
           <TabsTrigger
             value="drawdown"
             disabled
             className="font-black cursor-not-allowed"
           >
-            {t("Max Draw-Down Formula")}
+            Max Draw-Down Formula
           </TabsTrigger>
         </TabsList>
         <TabsContent value="future">
           <Card>
             <CardHeader>
               <CardTitle className="font-black">
-                {t("Future value of an investment")}
+                Future value of an investment
               </CardTitle>
-              <CardDescription
-                className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"}`}
-              >
-                {t("description")}
+              <CardDescription className="font-serif">
+                The formula is the Future Value of an investment compounded
+                periodically and includes periodic contributions
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -244,11 +236,11 @@ const BudgetPlanning = () => {
                     render={({ field }) => (
                       <FormItem className="flex sm:items-end flex-col items-center sm:flex-row sm:gap-[5px]">
                         <FormLabel
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px]
+                       whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("Initial Investment:")}
+                          Initial Investment:
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -261,11 +253,11 @@ const BudgetPlanning = () => {
                           />
                         </FormControl>
                         <div
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px]
+                       whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("mil VND")}
+                          mil VND
                         </div>
                         <FormMessage className="text-white-1" />
                       </FormItem>
@@ -277,11 +269,11 @@ const BudgetPlanning = () => {
                     render={({ field }) => (
                       <FormItem className="flex sm:items-end flex-col items-center sm:flex-row sm:gap-4">
                         <FormLabel
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                          whitespace-nowrap
-                       font-[500]`}
+                          className="text-[18px] 
+                      whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("Annual Interest Rate:")}
+                          Annual Interest Rate:
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -294,9 +286,9 @@ const BudgetPlanning = () => {
                           />
                         </FormControl>
                         <div
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px]
+                       whitespace-nowrap
+                    font-[500] font-serif"
                         >
                           %
                         </div>
@@ -310,11 +302,11 @@ const BudgetPlanning = () => {
                     render={({ field }) => (
                       <FormItem className="flex sm:items-end flex-col items-center sm:flex-row sm:gap-4">
                         <FormLabel
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px] 
+                      whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("Compounding Frequency:")}
+                          Compounding Frequency:
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -336,11 +328,11 @@ const BudgetPlanning = () => {
                     render={({ field }) => (
                       <FormItem className="flex sm:items-end flex-col items-center sm:flex-row sm:gap-4">
                         <FormLabel
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px] 
+                      whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("Investing Time:")}
+                          Investing Time:
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -355,9 +347,9 @@ const BudgetPlanning = () => {
                         <div
                           className="text-[18px]
                        whitespace-nowrap
-                    font-[500] ${?'font-serif' : 'font-mono'}"
+                    font-[500] font-serif"
                         >
-                          {t("Years")}
+                          Years
                         </div>
                         <FormMessage className="text-white-1" />
                       </FormItem>
@@ -369,11 +361,11 @@ const BudgetPlanning = () => {
                     render={({ field }) => (
                       <FormItem className="flex sm:items-end flex-col items-center sm:flex-row sm:gap-4">
                         <FormLabel
-                          className={`${currentLocale !== "vi" ? "font-serif" : "font-mono"} text-[18px]
-                        whitespace-nowrap
-                     font-[500]`}
+                          className="text-[18px] 
+                      whitespace-nowrap
+                    font-[500] font-serif"
                         >
-                          {t("Payment Amount:")}
+                          Payment Amount:
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -388,9 +380,9 @@ const BudgetPlanning = () => {
                         <div
                           className="text-[18px]
                        whitespace-nowrap
-                    font-[500] ${?'font-serif' : 'font-mono'}"
+                    font-[500] font-serif"
                         >
-                          {t("mil VND/month")}
+                          mil VND/month
                         </div>
                         <FormMessage className="text-white-1" />
                       </FormItem>
@@ -401,26 +393,27 @@ const BudgetPlanning = () => {
             </CardContent>
             <CardFooter className="flex justify-center">
               <Button
-                className="${?'font-serif' : 'font-mono'} mt-[30px]"
+                className="font-serif mt-[30px]"
                 onClick={form.handleSubmit(onSubmit)}
               >
-                {t("Calculate Total Accumulated Amount")}
+                Calculate Total Accumulated Amount
               </Button>
             </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="drawdown">
-          <Card>{t("Nothing")}</Card>
+          <Card>Nothing</Card>
         </TabsContent>
       </Tabs>
       <div className="w-full">
         {results && (
           <Card className="mt-8">
             <CardHeader className="mb-6">
-              <CardDescription className="text-[16px] ${?'font-serif' : 'font-mono'}">
-                {t("Great! After")} {results[results.length - 1].year}{" "}
-                {t("quote")} {results[results.length - 1].endValue.toFixed(2)}{" "}
-                {t("million VND which is")}~{" "}
+              <CardDescription className="text-[16px] font-serif">
+                Great! After {results[results.length - 1].year} years of
+                disciplined and regular monthly investment, you will have an
+                amount of {results[results.length - 1].endValue.toFixed(2)}{" "}
+                million VND which is ~{" "}
                 {(
                   (results[results.length - 1].endValue * 100) /
                   parseInt(form.watch("initialValue"))
@@ -431,13 +424,13 @@ const BudgetPlanning = () => {
             <CardContent className="flex flex-col lg:flex-row gap-8">
               <div className="w-full">
                 <h3 className="text-[16px] font-[600] mb-4">
-                  {t("ASSET VALUE OVER TIME")}
+                  ASSET VALUE OVER TIME
                 </h3>
                 <BudgetChart data={results} />
               </div>
               <div className="w-full">
                 <h3 className="text-[16px] font-[600] mb-4">
-                  {t("INVESTMENT DETAILS (Million VND)")}
+                  INVESTMENT DETAILS (Million VND)
                 </h3>
                 <SummaryTable data={results} />
               </div>

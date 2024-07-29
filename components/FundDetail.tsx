@@ -149,9 +149,9 @@ export function FundDetail() {
   }, [fundInfoData, fundId]);
 
   return (
-    <section>
+    <section className="flex justify-center mt-[40px] w-full">
       {currentFund ? (
-        <Card>
+        <Card className="w-full max-w-[1000px]">
           <CardHeader>
             <CardTitle className="flex justify-start gap-3 items-center">
               <img
@@ -169,7 +169,7 @@ export function FundDetail() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig}>
+            <ChartContainer className='max-w-[1000px]' config={chartConfig}>
               <LineChart
                 data={chartData}
                 margin={{
