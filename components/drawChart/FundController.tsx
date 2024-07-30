@@ -9,6 +9,8 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { Label } from "../ui/label";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 interface Fund {
   name: string;
@@ -33,6 +35,9 @@ const FundController = ({
   selectedFunds,
   setSelectedFunds,
 }: FundControllerProps) => {
+  const pathname = usePathname();
+  const currentLocale = pathname.split("/")[1];
+  const t = useTranslations("ChartController");
   return (
     <div className="pt-10 w-full flex max-w-[800px]">
       <Collapsible
@@ -44,7 +49,11 @@ const FundController = ({
       >
         <CollapsibleTrigger asChild className="flex cursor-pointer">
           <div className="flex items-center justify-between px-4 h-[50px]">
-            <h4 className="font-[500] font-serif pl-[20px]">Show All Funds</h4>
+            <h4
+              className={`font-[500] pl-[20px]${currentLocale === "vi" ? "font-mono" : "font-serif"}`}
+            >
+              {t("Show All Funds")}
+            </h4>
             <CaretSortIcon className="h-6 w-6" />
           </div>
         </CollapsibleTrigger>
@@ -64,8 +73,10 @@ const FundController = ({
           >
             {Object.keys(fundsByType).map((type) => (
               <div key={type} className="flex flex-col gap-2">
-                <h2 className="flex font-serif justify-start text-lg font-[500] mb-4">
-                  {type}
+                <h2
+                  className={`flex ${currentLocale === "vi" ? "font-mono" : "font-serif"} justify-start text-lg font-[500] mb-4`}
+                >
+                  {t(type)}
                 </h2>
                 {fundsByType[type].map((fund: any) => (
                   <div
