@@ -8,8 +8,13 @@ import DrawChart from "./DrawChart";
 import { Skeleton } from "./ui/skeleton";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
+import { useAllFundData } from "@/hooks/useFunds";
+import { useDispatch } from "react-redux";
 
 const ChartView: React.FC = () => {
+  const allFunds = useAllFundData();
+  console.log(allFunds);
+  
   const dataTable = useQuery(api.funds.getAllFunds)?.map(
     ({ _creationTime, _id, Date, ...rest }): FundData => {
       const date = moment(Date.toString()).unix();
