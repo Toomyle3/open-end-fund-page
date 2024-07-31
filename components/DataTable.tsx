@@ -1,21 +1,4 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useQuery } from "convex/react";
-import { ChevronDownIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +17,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAllFundData } from "@/hooks/useFunds";
+import { FundInfoTable } from "@/types";
+import { ChevronDownIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useMemo, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -42,18 +43,30 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { api } from "@/convex/_generated/api";
-import { FundInfoTable } from "@/types";
 
 const DataTable: React.FC = () => {
-  const [data, setData] = useState<FundInfoTable[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
-
-  const fundInfoData = useQuery(api.fundInfo.getAllFundInfo);
+  const fundInfoData = useAllFundData();
+  const data: FundInfoTable[] = useMemo(() => {
+    return (
+      fundInfoData?.map((fund) => ({
+        fund_id: fund.id,
+        name: fund.name,
+        short_name: fund.shortName,
+        code: fund.code,
+        fund_url: fund.owner.website,
+        fund_type: fund.dataFundAssetType.code,
+        fund_status: fund.status,
+        avatar_url: fund.owner.avatarUrl,
+        nav: fund.nav,
+      })) ?? []
+    );
+  }, [fundInfoData]);
+  console.log(fundInfoData);
   const router = useRouter();
 
   const columns: ColumnDef<FundInfoTable>[] = useMemo(
@@ -126,6 +139,16 @@ const DataTable: React.FC = () => {
         cell: ({ row }) => (
           <div className="capitalize text-blue-700">
             {row.getValue("short_name")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "nav",
+        header: "Price",
+        cell: ({ row }) => (
+          <div className="text-blue-700">
+            {row.getValue("nav")}
+            <span className="text-black"> VND</span>
           </div>
         ),
       },
@@ -203,12 +226,6 @@ const DataTable: React.FC = () => {
       globalFilter,
     },
   });
-
-  useEffect(() => {
-    if (fundInfoData && fundInfoData.length > 0) {
-      setData(fundInfoData);
-    }
-  }, [fundInfoData]);
 
   if (!data || data.length === 0) {
     return (

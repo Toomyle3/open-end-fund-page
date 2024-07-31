@@ -1,7 +1,5 @@
-import { AllFund, FundRequestBody } from "../types";
 import axiosInstance from "@/axios/axios";
-import { setAllFundData } from "@/store/fundsSlice";
-import { useDispatch } from "react-redux";
+import { AllFund, FundRequestBody } from "../types";
 
 const getAllFund = async (pageSize: number): Promise<AllFund[] | null> => {
   const requestBody: FundRequestBody = {
