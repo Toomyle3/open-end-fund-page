@@ -149,9 +149,9 @@ export function FundDetail() {
   }, [fundInfoData, fundId]);
 
   return (
-    <section>
+    <section className="flex justify-center pt-[60px]">
       {currentFund ? (
-        <Card>
+        <Card className="max-w-[1000px]">
           <CardHeader>
             <CardTitle className="flex justify-start gap-3 items-center">
               <img
