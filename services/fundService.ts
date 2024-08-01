@@ -40,7 +40,7 @@ const getFundNav = async (fundId: number): Promise<FundeNavData[] | null> => {
     const response = await axiosInstance.post<FundeNavData[]>(
       "/fmarket/res/product/get-nav-history",
       requestBody
-    );
+    ); 
     return response.data;
   } catch (error) {
     console.error("Error fetching fund's nav:", error);
