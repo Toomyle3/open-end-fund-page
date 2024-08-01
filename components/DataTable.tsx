@@ -1,21 +1,4 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useQuery } from "convex/react";
-import { ChevronDownIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +17,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { api } from "@/convex/_generated/api";
+import { FundInfoTable } from "@/types";
+import { ChevronDownIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useQuery } from "convex/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -42,8 +44,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { api } from "@/convex/_generated/api";
-import { FundInfoTable } from "@/types";
 
 const DataTable: React.FC = () => {
   const [data, setData] = useState<FundInfoTable[]>([]);
@@ -83,6 +83,7 @@ const DataTable: React.FC = () => {
         enableHiding: false,
       },
       {
+        id: "fund_id",
         accessorKey: "fund_id",
         header: "Fund ID",
         cell: ({ row }) => (
@@ -90,6 +91,7 @@ const DataTable: React.FC = () => {
         ),
       },
       {
+        id: "avatar_url",
         accessorKey: "avatar_url",
         header: "Logo",
         cell: ({ row }) => (
@@ -103,6 +105,7 @@ const DataTable: React.FC = () => {
         ),
       },
       {
+        id: "name",
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => (
@@ -121,6 +124,7 @@ const DataTable: React.FC = () => {
         ),
       },
       {
+        id: "short_name",
         accessorKey: "short_name",
         header: "Short Name",
         cell: ({ row }) => (
@@ -130,11 +134,13 @@ const DataTable: React.FC = () => {
         ),
       },
       {
+        id: "code",
         accessorKey: "code",
         header: "Code",
         cell: ({ row }) => <div>{row.getValue("code")}</div>,
       },
       {
+        id: "fund_url",
         accessorKey: "fund_url",
         header: "Website Link",
         cell: ({ row }) => (
@@ -149,6 +155,7 @@ const DataTable: React.FC = () => {
         ),
       },
       {
+        id: "fund_type",
         accessorKey: "fund_type",
         header: "Type",
         cell: ({ row }) => <div>{row.getValue("fund_type")}</div>,
@@ -224,10 +231,11 @@ const DataTable: React.FC = () => {
     <div className="w-full max-w-[1000px]">
       <div className="flex items-center py-4">
         <Input
+          id="search"
           placeholder="Filter all columns..."
           value={globalFilter ?? ""}
           onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
+          className="max-w-[50%]"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

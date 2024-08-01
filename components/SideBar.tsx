@@ -23,7 +23,7 @@ const SideBar = () => {
   const t = useTranslations("SideBar");
 
   return (
-    <section className="m-w-[300px]">
+    <section className="w-[93px]">
       <Sheet>
         <SheetTrigger>
           <Image

@@ -29,7 +29,7 @@ const Language = () => {
 
   return (
     <Select onValueChange={handleValueChange} value={value}>
-      <SelectTrigger className="w-[150px]">
+      <SelectTrigger className="w-fit">
         <Image
           src="/images/translate.svg"
           width={30}
@@ -39,8 +39,8 @@ const Language = () => {
         <SelectValue placeholder="Select language" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="vi">Vietnamese</SelectItem>
-        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="vi">VN</SelectItem>
+        <SelectItem value="en">ENG</SelectItem>
       </SelectContent>
     </Select>
   );
