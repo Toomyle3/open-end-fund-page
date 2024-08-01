@@ -33,8 +33,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { Skeleton } from "./ui/skeleton";
@@ -52,7 +53,9 @@ const DataTable: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
-
+  const t = useTranslations("DataTable");
+  const pathname = usePathname();
+  const currentLocale = pathname.split("/")[1];
   const fundInfoData = useQuery(api.fundInfo.getAllFundInfo);
   const router = useRouter();
 
@@ -85,7 +88,7 @@ const DataTable: React.FC = () => {
       {
         id: "fund_id",
         accessorKey: "fund_id",
-        header: "Fund ID",
+        header: t("Fund ID"),
         cell: ({ row }) => (
           <div className="w-[60px]">{row.getValue("fund_id")}</div>
         ),
@@ -93,7 +96,7 @@ const DataTable: React.FC = () => {
       {
         id: "avatar_url",
         accessorKey: "avatar_url",
-        header: "Logo",
+        header: t("Logo"),
         cell: ({ row }) => (
           <div>
             <img
@@ -107,7 +110,7 @@ const DataTable: React.FC = () => {
       {
         id: "name",
         accessorKey: "name",
-        header: "Name",
+        header: t("Name"),
         cell: ({ row }) => (
           <TooltipProvider>
             <Tooltip>
@@ -126,7 +129,7 @@ const DataTable: React.FC = () => {
       {
         id: "short_name",
         accessorKey: "short_name",
-        header: "Short Name",
+        header: t("Short Name"),
         cell: ({ row }) => (
           <div className="capitalize text-blue-700">
             {row.getValue("short_name")}
@@ -136,13 +139,13 @@ const DataTable: React.FC = () => {
       {
         id: "code",
         accessorKey: "code",
-        header: "Code",
+        header: t("Code"),
         cell: ({ row }) => <div>{row.getValue("code")}</div>,
       },
       {
         id: "fund_url",
         accessorKey: "fund_url",
-        header: "Website Link",
+        header: t("Website Link"),
         cell: ({ row }) => (
           <Link
             target="_blank"
@@ -157,7 +160,7 @@ const DataTable: React.FC = () => {
       {
         id: "fund_type",
         accessorKey: "fund_type",
-        header: "Type",
+        header: t("Type"),
         cell: ({ row }) => <div>{row.getValue("fund_type")}</div>,
       },
       {
@@ -167,19 +170,19 @@ const DataTable: React.FC = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t("Open menu")}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("Actions")}</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
                   router.push(`/data-view/${row.original?.fund_id}`)
                 }
                 className="cursor-pointer"
               >
-                Fund Detail
+                {t("Fund Detail")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -221,7 +224,7 @@ const DataTable: React.FC = () => {
     return (
       <div className="pt-10 h-[600px] flex justify-center w-full items-center text-black text-[30px] font-[25px] font-serif">
         <Skeleton className="h-[600px] w-screen rounded-xl flex justify-center items-center">
-          Loading...
+          {t("Loading...")}
         </Skeleton>
       </div>
     );
@@ -232,7 +235,7 @@ const DataTable: React.FC = () => {
       <div className="flex items-center py-4">
         <Input
           id="search"
-          placeholder="Filter all columns..."
+          placeholder={t("Filter")}
           value={globalFilter ?? ""}
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-[50%]"
@@ -240,7 +243,7 @@ const DataTable: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t("Columns")} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -307,7 +310,7 @@ const DataTable: React.FC = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t("No results.")}
                 </TableCell>
               </TableRow>
             )}
@@ -317,7 +320,7 @@ const DataTable: React.FC = () => {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t("row(s)")}
         </div>
         <div className="space-x-2">
           <Button
@@ -326,7 +329,7 @@ const DataTable: React.FC = () => {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            {t("Previous")}
           </Button>
           <Button
             variant="outline"
@@ -334,7 +337,7 @@ const DataTable: React.FC = () => {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            {t("Next")}
           </Button>
         </div>
       </div>

@@ -45,12 +45,31 @@
     "INVESTMENT DETAILS (Million VND)": "INVESTMENT DETAILS (Million VND)",
     "Year": "Year",
     "Start Value": "Start Value",
-    "Nothing":"Nothing",
+    "Nothing": "Nothing",
     "Investment": "Investment",
     "Interest": "Interest",
     "End Value": "End Value",
     "See More": "See More",
     "Million VND": "Million VND",
     "million VND which is": "million VND which is"
+  },
+  "DataTable": {
+    "Filter": "Filter all columns...",
+    "Columns": "Columns",
+    "No results.": "No results.",
+    "row(s)": "row(s) selected.",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Logo": "Logo",
+    "Name": "Name",
+    "Short Name": "Short Name",
+    "Website Link": "Website Link",
+    "Type": "Type",
+    "Code": "Code",
+    "Fund ID": "Fund ID",
+    "Loading...": "Loading...",
+    "Open menu": "Open menu",
+    "Fund Detail": "Fund Detail",
+    "Actions": "Actions"
   }
 }

@@ -48,9 +48,28 @@
     "Investment": "Đầu tư",
     "Interest": "Lãi suất",
     "End Value": "Giá trị cuối cùng",
-    "Nothing":"Không có gì",
+    "Nothing": "Không có gì",
     "See More": "Xem thêm",
     "Million VND": "Triệu VND",
     "million VND which is": "triệu VND tương đương"
+  },
+  "DataTable": {
+    "Filter": "Lọc tất cả các cột...",
+    "Columns": "Các cột",
+    "No results.": "Không có kết quả.",
+    "row(s)": "hàng được chọn.",
+    "Previous": "Trước",
+    "Next": "Sau",
+    "Name": "Tên",
+    "Short Name": "Tên viết tắt",
+    "Website Link": "Trang web",
+    "Type": "Loại",
+    "Code": "Mã",
+    "Logo" : "Ảnh ĐD",
+    "Fund ID": "ID Quỹ",
+    "Loading...": "Đang tải",
+    "Open menu": "Mở danh mục",
+    "Fund Detail": "Chi tiết Quỹ",
+    "Actions": "Chức Năng"
   }
 }

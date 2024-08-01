@@ -203,7 +203,7 @@ const BudgetPlanning = () => {
   return (
     <div className="w-full max-w-[1000px] flex flex-col justify-center items-center">
       <h1
-        className={`text-[30px] w-full flex justify-center pt-[60px] pb-[60px] text-gray-600 font-[600] ${currentLocale !== "vi" ? "font-mono" : "${?'font-serif' : 'font-mono'}"}`}
+        className={`text-[30px] w-full flex justify-center pt-[60px] pb-[60px] text-gray-600 font-[600] ${currentLocale !== "vi" ? 'font-serif' : 'font-mono'}`}
       >
         {t("Budget Planning Tool")}
       </h1>
