@@ -151,7 +151,7 @@ export function FundDetail() {
   return (
     <section className="flex justify-center pt-[60px]">
       {currentFund ? (
-        <Card className="max-w-[1000px]">
+        <Card className="max-w-[800px] w-full">
           <CardHeader>
             <CardTitle className="flex justify-start gap-3 items-center">
               <img
