@@ -1,5 +1,5 @@
 import axiosInstance from "@/axios/axios";
-import { AllFund, FundRequestBody } from "../types";
+import { AllFund, FundeNavData, FundNavRequestBody, FundRequestBody } from "../types";
 
 const getAllFund = async (pageSize: number): Promise<AllFund[] | null> => {
   const requestBody: FundRequestBody = {
@@ -28,4 +28,24 @@ const getAllFund = async (pageSize: number): Promise<AllFund[] | null> => {
   }
 };
 
-export { getAllFund };
+const getFundNav = async (fundId: number): Promise<FundeNavData[] | null> => {
+  const requestBody: FundNavRequestBody = {
+    isAllData: 0,
+    productId: fundId,
+    fromDate: '198000101',
+    toDate: new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+  };
+
+  try {
+    const response = await axiosInstance.post<FundeNavData[]>(
+      "/fmarket/res/product/get-nav-history",
+      requestBody
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching fund's nav:", error);
+    return null;
+  }
+};
+
+export { getAllFund, getFundNav };

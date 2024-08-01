@@ -66,7 +66,6 @@ const DataTable: React.FC = () => {
       })) ?? []
     );
   }, [fundInfoData]);
-  console.log(fundInfoData);
   const router = useRouter();
 
   const columns: ColumnDef<FundInfoTable>[] = useMemo(

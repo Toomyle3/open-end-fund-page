@@ -189,3 +189,18 @@ export interface FundRequestBody {
   searchField: string;
   isBuyByReward: boolean;
 }
+
+export interface FundNavRequestBody {
+  isAllData: number;
+  productId: number;
+  fromDate: string;
+  toDate: string;
+}
+
+export interface FundeNavData {
+  createdAt: number;
+  id: number;
+  nav: number;
+  navDate: string;
+  productId: number;
+}

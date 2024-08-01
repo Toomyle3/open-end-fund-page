@@ -1,52 +1,24 @@
 "use client";
 import { api } from "@/convex/_generated/api";
-import { FundData } from "@/types";
+import { FundData, FundeNavData } from "@/types";
 import { useQuery } from "convex/react";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DrawChart from "./DrawChart";
 import { Skeleton } from "./ui/skeleton";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
+import { getFundNav } from "@/services/fundService";
+import { useDispatch } from "react-redux";
 
 const ChartView: React.FC = () => {
-  const dataTable = useQuery(api.funds.getAllFunds)?.map(
-    ({ _creationTime, _id, Date, ...rest }): FundData => {
-      const date = moment(Date.toString()).unix();
-      const values = Object.entries(rest).reduce<Record<string, number>>(
-        (acc, [key, value]) => {
-          if (value !== "") {
-            const numValue = Number(value);
-            if (!isNaN(numValue)) {
-              acc[key] = numValue;
-            }
-          }
-          return acc;
-        },
-        {}
-      );
+  const [data, setData] = useState<any>([]);
+  console.log(data);
 
-      return {
-        date,
-        ...values,
-      } as FundData;
-    }
-  );
-  const [data, setData] = useState<FundData[] | null>(null);
   const [windowWidth, setWindowWidth] = useState<number | null>(null);
   const t = useTranslations("Home");
   const pathname = usePathname();
   const currentLocale = pathname.split("/")[1];
-
-  useEffect(() => {
-    if (
-      dataTable &&
-      dataTable.length > 0 &&
-      JSON.stringify(dataTable) !== JSON.stringify(data)
-    ) {
-      setData(dataTable);
-    }
-  }, [data, dataTable]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -55,6 +27,21 @@ const ChartView: React.FC = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getFundNav(23);
+      setData(
+        response?.map((data) => {
+          return {
+            Date: data.navDate,
+            VESAF: data.nav,
+          };
+        })
+      );
+    };
+    fetchData();
   }, []);
 
   return (

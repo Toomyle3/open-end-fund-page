@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AllFund } from '../types';
+import { AllFund, FundeNavData } from '../types';
 
 interface FundStates {
   allFund: AllFund[];
