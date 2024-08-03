@@ -56,7 +56,7 @@
   "DataTable": {
     "Filter": "Lọc tất cả các cột...",
     "Columns": "Các cột",
-    "No results.": "Không có kết quả.",
+    "No results": "Không có kết quả.",
     "row(s)": "hàng được chọn.",
     "Previous": "Trước",
     "Next": "Sau",

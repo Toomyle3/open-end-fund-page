@@ -56,7 +56,7 @@
   "DataTable": {
     "Filter": "Filter all columns...",
     "Columns": "Columns",
-    "No results.": "No results.",
+    "No results": "No results.",
     "row(s)": "row(s) selected.",
     "Previous": "Previous",
     "Next": "Next",
