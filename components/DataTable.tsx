@@ -224,7 +224,7 @@ const DataTable: React.FC = () => {
     return (
       <div className="pt-10 h-[600px] flex justify-center w-full items-center text-black text-[30px] font-[25px] font-serif">
         <Skeleton className="h-[600px] w-screen rounded-xl flex justify-center items-center">
-          {t("Loading...")}
+          {t("Loading")}
         </Skeleton>
       </div>
     );
